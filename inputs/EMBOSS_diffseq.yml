@@ -1,0 +1,90 @@
+Program:
+    name                : EMBOSS diffseq
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: EMBOSS'
+    numImputs           : 2
+    outputPath          : ./results/EMBOSS/diffseq/
+    publication         :
+    helpSupplementary   : Find differences between nearly identical sequences
+    desc                :
+    website             : http://emboss.sourceforge.net/apps/cvs/emboss/apps/diffseq.html
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName       : jego/emboss
+    cmd             : diffseq --auto
+    sharedFolder    : /data
+    dockerName      : 
+    rmks            :
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type:                   FastaFile
+    connector:              2
+    connectorText:          Sequence
+    OneConnectorOnlyFor:    2
+    SolelyConnectors:       
+    command2Call:           -asequence
+    extention:              .fasta
+
+  - type:                   FastaFile
+    connector:              3
+    connectorText:          Sequence
+    OneConnectorOnlyFor:    3
+    SolelyConnectors:       
+    command2Call:           -bsequence
+    extention:              .fasta
+Outputs:
+  - type:           FastaFile
+    connectorText:  Sequence Sort
+    command2Call:   -outfile
+    extention:      .diffseq
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -wordsize
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 10
+                vMin    : 2
+                vMax    : 
+                vJump   : 100
+            tooltip     : "The similar regions between the two sequences are found by creating a hash table of 'wordsize'd subsequences. 10 is a reasonable default. Making this value larger (20?) may speed up the program slightly, but will mean that any two differences within 'wordsize' of each other will be grouped as a single region of difference. This value may be made smaller (4?) to improve the resolution of nearby differences, but the program will go much slower."
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -globaldifferences
+            shortName   :
+            cType       : box
+            values:
+                vType   : boo
+                vDefault: 0
+                vMin    : 0
+                vMax    : 1
+                vJump   : 1
+            tooltip     : "Normally this program will find regions of identity that are the length of the specified word-size or greater and will then report the regions of difference between these matching regions. This works well and is what most people want if they are working with long overlapping nucleic acid sequences. You are usually not interested in the non-overlapping ends of these sequences. If you have protein sequences or short RNA sequences however, you will be interested in differences at the very ends . It this option is set to be true then the differences at the ends will also be reported."
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+AfterProcess:
+    - modifications:
+        - None

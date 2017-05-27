@@ -1,0 +1,308 @@
+Program:
+    name                : EMBOSS est2genome
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: EMBOSS'
+    numImputs            : 2
+    outputPath          : ./results/EMBOSS/est2genome/
+    publication         :
+    helpSupplementary   : Align EST sequences to genomic DNA sequence
+    desc                :
+    website             : http://emboss.sourceforge.net/apps/cvs/emboss/apps/est2genome.html
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/emboss
+    cmd                 : est2genome --auto
+    sharedFolder        : /data
+    dockerName          :
+    rmks                :
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : FastaFile
+    connector           : 2
+    connectorText       : Sequence
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        : -estsequence
+    extention           : .fasta
+
+  - type                : EmblFile
+    connector           : 2
+    connectorText       : Sequence
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        : -estsequence
+    extention           : .embl
+
+  - type                : GenomeFile
+    connector           : 3
+    connectorText       : Genome
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    :
+    command2Call        : -genomesequence
+    extention           :
+Outputs:
+  - type            : Est2genomeFile
+    connectorText   : Outfile
+    command2Call    : -outfile
+    extention       : .est2genome
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -match
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 1
+                vMin    : 0
+                vMax    : 
+                vJump   : 1
+            tooltip     : Score for matching two bases. Default 1
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -mismatch
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 1
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Score for matching two bases. Default 1
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -gappenalty
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 2
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Cost for deleting a single base in either sequence, excluding introns. Default 2
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -intronpenalty
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 40
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Cost for an intron, independent of length.. Default 40
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -splicepenalty
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 20
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Cost for an intron, independent of length and starting/ending on donor-acceptor sites. Default 20
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -minscore
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 30
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Exclude alignments with scores below this threshold score. Default 30
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -reverse
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 0
+                vMin    : 0
+                vMax    : 1
+                vJump   : 1
+            tooltip     : Reverse the orientation of the EST sequence - 0 False / 1 True. Default 0 (false).
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -usesplice
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 1
+                vMin    : 0
+                vMax    : 1
+                vJump   : 1
+            tooltip     : Use donor and acceptor splice sites. If you want to ignore donor-acceptor sites then set this to be false. - 0 False / 1 True. Default 1 (True).
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -mode
+            shortName   :
+            cType       : box
+            values:
+                vType   : list
+                vDefault: both
+                vValues :
+                    - both
+                    - forward
+                    - reverse
+            tooltip     : This determines the comparison mode. The default value is 'both', in which case both strands of the est are compared assuming a forward gene direction (ie GT/AG splice sites), and the best comparison redone assuming a reversed (CT/AC) gene splicing direction. The other allowed modes are 'forward', when just the forward strand is searched, and 'reverse', ditto for the reverse strand. Default both.
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -best
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 1
+                vMin    : 0
+                vMax    : 1
+                vJump   : 1
+            tooltip     : You can print out all comparisons instead of just the best one by setting this to be false. - 0 False / 1 True. Default 1 (True).
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -space
+            shortName   :
+            cType       : box
+            typeValue   : float
+            values:
+                vType   : int
+                vDefault: 10.0
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : For linear-space recursion. If product of sequence lengths divided by 4 exceeds this then a divide-and-conquer strategy is used to control the memory requirements. In this way very long sequences can be aligned. If you have a machine with plenty of memory you can raise this parameter (but do not exceed the machine's physical RAM). Default 10.0.
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+            # problem
+          - name        : -shuffle
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 1
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Shuffle. Default 0
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -seed
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 20825
+                vMin    :
+                vMax    :
+                vJump   : 100
+            tooltip     : Random number seed. Default 20825
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -align
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 0
+                vMin    : 0
+                vMax    : 1
+                vJump   : 1
+            tooltip     : Show the alignment. The alignment includes the first and last 5 bases of each intron, together with the intron width. The direction of splicing is indicated by angle brackets (forward or reverse) or ???? (unknown). 0 False / 1 True. Default 0 (False)
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -width
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 50
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Alignment width. Default 50
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+AfterProcess:
+    - modifications:
+        - None

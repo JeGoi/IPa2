@@ -1,0 +1,97 @@
+Program:
+    name                : EMBOSS banana
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: EMBOSS'
+    numImputs           : 1
+    outputPath          : ./results/EMBOSS/banana/
+    publication         :
+    helpSupplementary   : Bending and curvature plot in B-DNA
+    desc                :
+    website             : http://emboss.sourceforge.net/apps/cvs/emboss/apps/banana.html
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName:      jego/emboss
+    cmd:            banana --auto
+    sharedFolder:   /data
+    dockerName: 
+    rmks:
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type:                   FastaFile
+    connector:              2
+    connectorText:          Sequence
+    OneConnectorOnlyFor:    2
+    SolelyConnectors:       
+    command2Call:           -sequence
+    extention:              .fasta
+Outputs:
+  - type:           BananaFile
+    connectorText:  BananaFile
+    command2Call:   -outfile
+    extention:      .profile
+Menus
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -graph
+            shortName   : 
+            cType       : box
+            values:
+                vType   : combo
+                vDefault: ps
+                vValues :
+                    - ps
+                    - hpgl
+                    - hp7470
+                    - hp7580
+                    - meta
+                    - cps
+                    - x11
+                    - tek
+                    - tekt
+                    - none
+                    - data
+                    - xterm
+                    - png
+                    - gif
+                    - pdf
+                    - svg
+            tooltip     : 'Choose Graph type, EMBOSS_GRAPHICS value'
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -residuesperline
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 50
+                vMin    : 0
+                vMax    : 
+                vJump   : 10
+            tooltip     : "Number of residues to be displayed on each line"
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+AfterProcess:
+    - modifications:
+        - None

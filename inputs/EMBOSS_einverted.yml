@@ -1,0 +1,137 @@
+Program:
+    name                : EMBOSS einverted
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: EMBOSS'
+    numImputs           : 1
+    outputPath          : ./results/EMBOSS/einverted/
+    publication         :
+    helpSupplementary   : Finds DNA inverted repeats
+    desc                :
+    website             : http://emboss.sourceforge.net/apps/cvs/emboss/apps/einverted.html
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/emboss
+    cmd                 : einverted --auto
+    sharedFolder        : /data
+    dockerName          : 
+    rmks                :
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : FastaFile
+    connector           : 2
+    connectorText       : Sequence
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :       
+    command2Call        : -sequence
+    extention           : .fasta
+
+Outputs:
+  - type            : EinvertedFile
+    connectorText   :  Outfile
+    command2Call    : -outfile
+    extention       : .einverted
+
+  - type            : FastaFile
+    connectorText   : OutSeq
+    command2Call    : -outseq
+    extention       : .fasta
+
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -gap
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 12
+                vMin    : 0
+                vMax    : 
+                vJump   : 1
+            tooltip     : Gap penalty. Default 12
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -threshold
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 50
+                vMin    : 0
+                vMax    : 
+                vJump   : 10
+            tooltip     : Minimum score threshold. Default 50
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+            
+          - name        : -match
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 3
+                vMin    : 0
+                vMax    : 
+                vJump   : 1
+            tooltip     : Match score. Default 3
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+            
+          - name        : -mismatch
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: -4
+                vMin    : 
+                vMax    : 0
+                vJump   : 1
+            tooltip     : Mismatch score. Default -4
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+            
+          - name        : -maxrepeat
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 2000
+                vMin    : 0
+                vMax    : 
+                vJump   : 100
+            tooltip     : Maximum separation between the start of repeat and the end of the inverted repeat. Default 2000
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+AfterProcess:
+    - modifications:
+        - None

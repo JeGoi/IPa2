@@ -1,0 +1,69 @@
+Program:
+    name                : EMBOSS sizeseq
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: EMBOSS'
+    numImputs           : 1
+    outputPath          : ./results/EMBOSS/sizeseq/
+    publication         : 
+    helpSupplementary   : sizeseq reads a set of sequences and sorts them by length. By default the sort is in ascending order.
+    desc                :         
+    website             : http://emboss.sourceforge.net/apps/cvs/emboss/apps/sizeseq.html
+    webServices         :  
+    outputFilesFromOutputPath: 
+Docker:
+    imageName   : jego/emboss
+    cmd         : sizeseq --auto
+    sharedFolder: /data
+    dockerName  : 
+    rmks        :
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : FastaFile
+    connector           : 2
+    connectorText       : Sequence
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :     
+    command2Call        : -sequences
+    extention           : .fasta
+Outputs:
+  - type:           FastaFile
+    connectorText:  Sequence Sort
+    command2Call:   -outseq
+    extention:      .fasta
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    Panel:
+      - tab:   Advanced Options
+        Arguments:
+          - name        : -descending
+            shortName   :  
+            cType       : box
+            values:
+                vType   : boo
+                vDefault: 0
+                vMin    : 0
+                vMax    : 1
+                vJump   : 1
+            tooltip     : By default the shortest sequence is given first. Choose true if you want the Longest first. 0 False / 1 True. Default 0 (False).
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+AfterProcess:
+    - modifications:
+        - None
+
+#(Parameter 1) 	seqset 	Sequence set filename and optional format, or reference (input USA) 	Readable set of sequences 	Required	Types: gff (gff3), gff2, embl (em), genbank (gb, refseq), ddbj, refseqp, pir (nbrf), swissprot (swiss, sw), dasgff and debug. 
+#C|-osformat2;-osformat_outseq 	string 	Output seq format 	Any string 	 Types: embl, genbank, gff, pir, swiss, dasgff, debug, listfile, dbmotif, diffseq, excel, feattable, motif, nametable, regions, seqtable, simple, srs, table, tagseq. 

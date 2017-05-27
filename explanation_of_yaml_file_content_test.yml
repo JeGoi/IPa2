@@ -1,0 +1,232 @@
+Program:
+    name                : Program Name
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : Path/to/program/in/Linux
+      ExecutableMacOSX  : Path/to/program/in/MacOSx
+      Executable        : 'Path\to\program\in\Windows'
+    menu                : 'Menu:Submenu'
+    numImputs           : 3
+    outputPath          : Path/to/find/outputFiles
+    publication         : 
+    helpSupplementary   : 
+    desc                : 
+    website             : 
+    webServices         : 
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : hello/world
+    cmd                 : hello_world --auto
+    sharedFolder        : data
+    dockerName          :
+    rmks                :
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : FastaFile
+    connector           : 2
+    connectorName       : Sequence
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        : -estsequence
+    extention           : .fasta
+
+  - type                : EmblFile
+    connector           : 2
+    connectorName       : Sequence
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        : -estsequence
+    extention           : .embl
+
+  - type                : GenomeFile
+    connector           : 3
+    connectorName       : Genome
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    :
+    command2Call        : -genomesequence
+    extention           :
+Outputs:
+  - type            : Est2genomeFile
+    connectorName   : Outfile
+    command2Call    : -outfile
+    extention       : .est2genome
+Menus:
+  - name    : Default Options
+    help    : Default Options
+    isMenu  : true
+    isTab   : false
+    
+  - name    : Other Options
+    help    : Other Options
+    isMenu  : false
+    isTab   : false
+    Panel:
+      - tab     : Other Options 1
+        Commands:
+          - name        : -matchOO1
+            shortName   :
+            cType       : box
+            values:
+                vType   : dou
+                vDefault: 1
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Score for matching two bases. Default 1
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+  - name    : Returned Options
+    isMenu  : true
+    isTab   : true
+    Panel:
+      - tab     : Returned Options 1
+        Commands:
+          - name        : -NOmatchAO1
+            shortName   :
+            cType       : box
+            values:
+                vType   : dou
+                vDefault: 1
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Score for matching two bases. Default 1
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+      - tab     : Returned Options 2
+        Commands:
+          - name        : -NOmatchAO2
+            shortName   :
+            cType       : box
+            values:
+                vType   : dou
+                vDefault: 1
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Score for matching two bases. Default 1
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    Panel:
+      - tab     : Advanced Options 1
+        Commands:
+          - name        : -matchAO1
+            shortName   :
+            cType       : box
+            values:
+                vType   : dou
+                vDefault: 1
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Score for matching two bases. Default 1
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+      - tab     : Advanced Options 2
+        Commands:
+          - name        : -matchAO2
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 1
+                vMin    : 0
+                vMax    : 100
+                vJump   : 1
+            tooltip     : Score for matching two bases. Default 1
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+      - tab     : Advanced Options 3
+        Commands:
+          - name        : -matchAO3
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 1
+                vMin    :
+                vMax    :
+                vJump   : 1
+            tooltip     : Score for matching two bases. Default 1
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+      - tab     : Advanced Options 4
+        Commands:
+          - name        : -matchAO4
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 1
+                vMin    : 0
+                vMax    : 
+                vJump   : 1
+            tooltip     : Score for matching two bases. Default 1
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       : couojb
+
+          - name        : -mismatchAO4
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 1
+                vMin    :
+                vMax    : 100
+                vJump   : 1
+            tooltip     : Score for matching two bases. Default 1
+            label       :
+            oppositeTo  :
+                - graphAO4
+                - matchAO4
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -graphAO4
+            shortName   :
+            cType       : box
+            values:
+                vType   : list
+                vDefault: ps
+                vValues :
+                        - ps
+                        - hpgl
+                        - hp7470
+                        - hp7580
+            tooltip     : Choose Graph type, EMBOSS_GRAPHICS value
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :

@@ -1,0 +1,83 @@
+# ** means need to be there
+Program:  **
+    name                : [string]          ** (Program Name)
+    exitValue           : [int]             **  (output exit value)
+    executablePaths     : **
+      ExecutableLinux   : [string,'']       (Path/to/program/in/Linux)
+      ExecutableMacOSX  : [string,'']       (Path/to/program/in/MacOSx)
+      Executable        : [string,'']       ('Path\to\program\in\Windows')
+    menu                : [string]          ** ('Menu:Submenu')
+    numImputs           : [int]             ** (number of inputs)
+    outputPath          : [string]          ** Path/to/find/outputFiles
+    publication         : [string,'']       (link to a publication)
+    helpSupplementary   : [string,'']       (Help will be found in top right of the box)
+    desc                : [string,'']
+    website             : [string,'']       (link to application website)
+    webServices         : [string,'']       (link to application webservices)
+    outputFilesFromOutputPath: [string,'']  (
+Docker:
+    imageName           : [string]                  ** (name of content in docker hub)
+    cmd                 : [string]                  ** (command to be executed in docker container)
+    sharedFolder        : [string]                  ** (link to the shared forlder in container)
+    dockerName          : [string,'']               (if you want a specific name for the container)
+    rmks                : [string,'']               (any remarks)
+    copyDockerFilesDir2SharedFolder: [string,'']    (directory where you want to copy files from the shared folder)
+Inputs: **
+  - type                : [string]          ** (biologic type)
+    connector           : [[2,4],true]      ** (wich connector)
+    connectorText       : [string]          ** (connector text)
+    OneConnectorOnlyFor : [true,false,'']   (Only one connector will be able to be added with the connector)
+    SolelyConnectors    : [true,false,'']   (Solely with the connector, usable when it's true, form of restriction)
+    command2Call        : [string,'']       (command used before the inputs)
+    extension           : [string]          ** (file extension, better if linked with biologic extention type)
+Outputs:
+  - type            : [string]      ** (biologic type)
+    connectorText   : [string]      ** (connector text)
+    command2Call    : [string,'']   (command used before the outputs)
+    extension       : [string]      ** (file extension, better if linked with biologic extention type)
+Menus:
+  - name    : [string]      ** Default Options (good to have one if you need a menu)
+    help    : [string,'']      Default Options
+    isMenu  : [true/false]  ** (part of menu options, if severals are true, when you will be able to select and choose options for these menus)
+    isTab   : [true/false]  ** (how tab will be seen, if tree it will be tab in tab. If false, it will be tab and label)
+    
+  - name    : [string]      ** (Other Option)
+    help    : [string,'']   Default Options (will be used in tooltip)
+    isMenu  : [true/false]  (part of menu options, if severals are true, when you will be able to select and choose options for these menus)
+    isTab   : [true/false]  (how tab will be seen, if tree it will be tab in tab. If false, it will be tab and label)
+    Panel:
+      - tab     : [string]      ** (Other Option)
+        Arguments: **
+          - name        : -[string]     ** (argument to be executed in options
+            shortName   : -[string,'']  (short argument to be executed in options
+            cType       : [box,but]     ** (box or button used to select the arguement)
+            values      : 
+                vType   : [dou,int,boo,flo,byt,sho,lon,combo,text]  ** (type of value: double, integer, boolean, float, byte, short, long, combobox, text)
+                vDefault: [val,string]                              **
+            # If [dou,int,boo,flo,byt,sho,lon]
+                vMin    : [val]
+                vMax    :
+                vJump   : 1
+            # If combo 
+                vValues :   ** (need values)
+                        - [string] **
+                        - [string] **
+            # If text
+                # will use vDefault only
+            tooltip     : [string]          ** will be used in tooltype to help user
+            label       : [string,'']       added after the value or the box
+            oppositeTo  :
+                - [string]                  name of opposite commands (if this one is selected the other will be removed)
+                - [string]                  name of opposite commands (if this one is selected the other will be removed)
+            parentOf    :
+                - [string]                  name of children commands (if this one is selected, the other will be available)
+                - [string]                  name of children commands (if this one is selected, the other will be available)
+            selected    : [true,false,'']   this command is selected by default
+            cHelp       : [string]          help for argument
+AfterProcess:
+    - modifications:
+        - Editor:
+            - Java
+            - Form
+        - Program
+        - Properties
