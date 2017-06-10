@@ -13,7 +13,8 @@ from os import listdir
 from os.path import isfile, join
 
 # Util functions
-
+testDirectory = "./outputs/"
+armaDir       = "../../armadillo2-master"
 # Test on the connector
 def connector_range(name,val):
     if 2 <= val <= 4:
@@ -40,35 +41,28 @@ def print_tab_values(values):
 #
 # Get Paths
 #
-def get_armadillo_dir():
-    return '../../armadillo2'
-
 def define_edit_path(isTest):
     # Need dir to armadillo
-    armaDir  = get_armadillo_dir()
     if (isTest):
-        edit = "./files/"
+        edit = testDirectory
     else:
         edit = armaDir+"/src/editors/"
     return edit
 
 def define_prop_path(isTest):
-    armaDir  = get_armadillo_dir()
     if (isTest):
-        prop = "./files/"
+        prop = testDirectory
     else:
         prog = armaDir+"/data/properties/"
     return prop
 
 def define_biol_path(isTest):
-    armaDir  = get_armadillo_dir()
     biol     = armaDir+"/src/biologic/"    
     return biol
 
 def define_prog_path(isTest):
-    armaDir  = get_armadillo_dir()
     if (isTest):
-        prog = "./files/"
+        prog = testDirectory
     else:
         prog = armaDir+"/src/programs/"
     return prog
