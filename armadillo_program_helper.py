@@ -45,12 +45,12 @@ import sys,os,getopt
 import tarfile
 import time
 import yaml
-import sub.util as u
-import sub.test_yml as test
-import sub.java_program as pgrm
-import sub.java_properties as prop
-import sub.java_file_editor as fileEdit
-import sub.java_form_editor as formEdit
+import packages.util as u
+import packages.test_yml as test
+import packages.java_program as pgrm
+import packages.java_properties as prop
+import packages.java_file_editor as fileEdit
+import packages.java_form_editor as formEdit
 import os.path
 
 author  = "J-G"
