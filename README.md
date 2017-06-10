@@ -1,4 +1,4 @@
-# armadillo_program_helper
+# IPa2 : Install Programs in armadillo2
 ## Synopsis
 
 This script will help programmers to prepare all program files needed to create a program caps with NetBeans IDE for Armadillo.
@@ -8,10 +8,10 @@ This script will help programmers to prepare all program files needed to create 
 * Work with:
   - Python 2.7.12
   - PyYAML extension : http://pyyaml.org/wiki/PyYAML
-  - need to be installed on the same directory of Armadillo like:\
+  - need to be installed on the same directory as armadillo like:\
     $ ls . \
-        armadillo-master\
-        armadillo_program_helper
+        armadillo2-master\
+        IPa2-master
 
 ## Yaml file
 
