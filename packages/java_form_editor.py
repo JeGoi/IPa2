@@ -14,11 +14,11 @@ import util as u
 # ===============================================
 #     FUNCTION create Java File Editor Form
 # ===============================================
-def create_java_editor_form(yml,isTest):
-    progDir     = u.define_edit_path(isTest)
+def create_java_editor_form(yml,armaDir):
+    progDir     = u.define_edit_path(armaDir)
     filename    = progDir+""+u.get_program_name(yml)+"Editors.form"
     out = open(filename, 'w')
-    
+
     yml['FrameDefaultVariables'] = {
         "name"  : "jTextField",
         "rename": "jButton",
@@ -27,7 +27,7 @@ def create_java_editor_form(yml,isTest):
         "stop"  : "jButton",
         "run"   : "jButton"
     }
-    
+
     write_header_file(out,yml)
     write_layout(out,yml)
     write_container(out,yml)
@@ -45,7 +45,7 @@ def write_header_file(out,yml):
                     "        <Component class=\"javax.swing.ButtonGroup\" name=\"Menu_Buttons\">\n"+
                     "        </Component>\n"+
                     "    </NonVisualComponents>\n")
-    
+
     out.write(  "    <Properties>\n"+
                 "        <Property name=\"defaultCloseOperation\" type=\"int\" value=\"2\"/>\n"+
                 "    </Properties>\n"+
@@ -65,7 +65,7 @@ def write_header_file(out,yml):
                 "        <AuxValue name=\"FormSettings_variablesModifier\" type=\"java.lang.Integer\" value=\"2\"/>\n"+
                 "    </AuxValues>\n"+
                 "\n")
-                
+
 def write_layout(out,yml):
     out.write(  "    <Layout>\n"+
                 "        <DimensionLayout dim=\"0\">\n"+
@@ -88,10 +88,10 @@ def write_layout(out,yml):
                 "                    <Group type=\"103\" groupAlignment=\"3\" attributes=\"0\">\n"+
                 "                        <Component id=\"close_jButton\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n"+
                 "                        <Component id=\"how_jButton\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n")
-                
+
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write(  "                    <Component id=\"docker_jButton\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n")
-                
+
     out.write(  "                    </Group>\n"+
                 "                    <EmptySpace max=\"-2\" attributes=\"0\"/>\n"+
                 "                    <Component id=\""+u.get_program_name(yml)+"_tab\" min=\"-2\" max=\"32767\" attributes=\"0\"/>\n"+
@@ -105,7 +105,7 @@ def write_layout(out,yml):
     write_command_component(out,8,"how_jButton","?","jButton",51,["ff",0,"ff"],"About this box",None,False)
     if 'Docker' in yml and yml['Docker'] is not None:
         write_command_component(out,8,"docker_jButton","Docker Editor",'JButton',91,None,'Access to the docker editor',None,False)
-        
+
 def write_container(out,yml):
     out.write(  "    <Container class=\"javax.swing.JTabbedPane\" name=\""+u.get_program_name(yml)+"_tab\">\n"+
                 "      <AccessibilityProperties>\n"+
@@ -156,7 +156,7 @@ def write_container(out,yml):
     for Panel in yml['Menus']:
         if Panel['isMenu']:
             allMenu.append(u.name_without_space(Panel['name']))
-    
+
     mLen = len(allMenu)
     if mLen>1:
         out.write(  "                  <Group type=\"102\" attributes=\"0\">\n"+
@@ -264,14 +264,14 @@ def write_container(out,yml):
     write_command_component(out,12,"run_jButton","RUN","button",91,['ff',74,0],"Run this box",None,False)
     write_command_component(out,12,"name_jLabel","(re)Name","label",None,None,"Name Box",None,False)
     write_command_component(out,12,"name_jTextField","Name","txt",None,None,"Rename the box here",None,False)
-    
+
     for Panel in yml['Menus']:
         if Panel['isMenu']:
             h = Panel['name']
             if 'help' in Panel:
                 h = Panel['help']
             write_command_component(out,12,u.name_without_space(Panel['name']),Panel['name'],"RBUTTON",None,None,h,None,True)
-            
+
     out.write(  "            <Container class=\"javax.swing.JScrollPane\" name=\"main_jScroll\">\n"+
                 "\n"+
                 "              <Layout class=\"org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout\"/>\n"+
@@ -313,7 +313,7 @@ def write_container(out,yml):
                         if pLen>1 and Panel['isTab']:
                             y = st_indented(sIndent,"        </Container>\n")
                             out.write(y)
-            
+
                 if pLen>1 and Panel['isTab']: # Means need a tabs and needs to close it
                     s = ""
                     sIndent -= 6
@@ -346,11 +346,11 @@ def write_panel(out,sIndent,pName):
     s += st_indented(sIndent,"  </Constraints>\n")
     out.write(s)
 
-                
+
 def write_tab_panel(out,sIndent,pName,panel):
     pNameI  = u.create_initials(pName)
     tmNameI = pNameI+"_"+pNameI
-    
+
     s = ""
     s += st_indented(sIndent,"  <Layout>\n")
     s += st_indented(sIndent,"    <DimensionLayout dim=\"0\">\n")
@@ -363,7 +363,7 @@ def write_tab_panel(out,sIndent,pName,panel):
     s += st_indented(sIndent,"    </DimensionLayout>\n")
     s += st_indented(sIndent,"    <DimensionLayout dim=\"1\">\n")
     s += st_indented(sIndent,"      <Group type=\"103\" groupAlignment=\"0\" attributes=\"0\">\n")
-    s += st_indented(sIndent,"        <Group type=\"102\" alignment=\"0\" attributes=\"0\">\n") 
+    s += st_indented(sIndent,"        <Group type=\"102\" alignment=\"0\" attributes=\"0\">\n")
     s += st_indented(sIndent,"          <Component id=\""+tmNameI+"_JTabbedPane\" pref=\"70\" max=\"32767\" attributes=\"0\"/>\n")
     s += st_indented(sIndent,"          <EmptySpace min=\"0\" pref=\"70\" max=\"32767\" attributes=\"0\"/>\n")
     s += st_indented(sIndent,"        </Group>\n")
@@ -374,7 +374,7 @@ def write_tab_panel(out,sIndent,pName,panel):
     s += st_indented(sIndent,"    <Container class=\"javax.swing.JTabbedPane\" name=\""+tmNameI+"_JTabbedPane\">\n")
     s += st_indented(sIndent,"      <Layout class=\"org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout\"/>\n")
     s += st_indented(sIndent,"      <SubComponents>\n")
-    
+
     out.write(s)
 
 def write_layout_panel2(out,sIndent,tabBV,dictBV):
@@ -383,7 +383,7 @@ def write_layout_panel2(out,sIndent,tabBV,dictBV):
     s += st_indented(sIndent,"    <DimensionLayout dim=\"0\">\n")
     s += st_indented(sIndent,"      <Group type=\"103\" groupAlignment=\"0\" attributes=\"0\">\n")
     s += st_indented(sIndent,"        <Group type=\"102\" attributes=\"0\">\n")
-    
+
     boo = False
     s += st_indented(sIndent,"          <Group type=\"103\" alignment=\"1\" attributes=\"0\">\n")
     for bv in tabBV:
@@ -411,7 +411,7 @@ def write_layout_panel2(out,sIndent,tabBV,dictBV):
             s += st_indented(sIndent,"            <Group type=\"103\" groupAlignment=\"3\" attributes=\"0\">\n  ")
         s += st_indented(sIndent,"            <Component id=\""+bv+"\"")
         if dictBV[bv] != "":
-            s += " alignment=\"3\"" 
+            s += " alignment=\"3\""
         s += " min=\"-2\" max=\"-2\" attributes=\"0\"/>\n"
         if dictBV[bv] != "":
             s += st_indented(sIndent,"              <Component id=\""+dictBV[bv]+"\" alignment=\"3\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n  ")
@@ -423,11 +423,11 @@ def write_layout_panel2(out,sIndent,tabBV,dictBV):
     s += st_indented(sIndent,"    </DimensionLayout>\n")
     s += st_indented(sIndent,"  </Layout>\n")
     out.write(s)
- 
+
 def write_subComponents2(out,sIndent,tabBV,dictBV,infB,infV):
     s = st_indented(sIndent,"  <SubComponents>\n")
     out.write(s)
-    
+
     for bv in tabBV:
         if bv.endswith("JLabel"):
             write_command_component(out,sIndent+2,bv,infB[bv],"label",None,None,"Sub Items",None,False)
@@ -447,7 +447,7 @@ def write_layout_panel(out,sIndent,pName,tName,commands):
     s += st_indented(sIndent,"    <DimensionLayout dim=\"0\">\n")
     s += st_indented(sIndent,"      <Group type=\"103\" groupAlignment=\"0\" attributes=\"0\">\n")
     s += st_indented(sIndent,"        <Group type=\"102\" attributes=\"0\">\n")
-    
+
     boo = False
     if len(commands)>0:
         s += st_indented(sIndent,"          <Group type=\"103\" alignment=\"1\" attributes=\"0\">\n")
@@ -456,7 +456,7 @@ def write_layout_panel(out,sIndent,pName,tName,commands):
             cType   = co['cType']
             c       = u.create_button_name(pName,tName,cName,cType)
             s += st_indented(sIndent,"            <Component id=\""+c+"\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n")
-            
+
             if 'values' in co:
                 boo = True
         s += st_indented(sIndent,"          </Group>\n")
@@ -471,7 +471,7 @@ def write_layout_panel(out,sIndent,pName,tName,commands):
                 vType   = co['values']['vType']
                 v       = u.create_value_name(pName,tName,cName,vType)
                 s += st_indented(sIndent,"            <Component id=\""+v+"\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n")
-        
+
         s += st_indented(sIndent,"            <EmptySpace max=\"32767\" attributes=\"0\"/>\n")
         s += st_indented(sIndent,"          </Group>\n")
 
@@ -491,16 +491,16 @@ def write_layout_panel(out,sIndent,pName,tName,commands):
         c       = u.create_button_name(pName,tName,cName,cType)
         s += st_indented(sIndent,"            <Component id=\""+c+"\"")
         if 'values' in co:
-            s += " alignment=\"3\"" 
+            s += " alignment=\"3\""
         s += " min=\"-2\" max=\"-2\" attributes=\"0\"/>\n"
-        
+
         if 'values' in co:
             v       = ""
             vType   = co['values']['vType']
             v       = u.create_value_name(pName,tName,cName,vType)
             #s += st_indented(sIndent,"                <EmptySpace type=\"separate\" max=\"-2\" attributes=\"0\"/>\n")
             s += st_indented(sIndent,"              <Component id=\""+v+"\" alignment=\"3\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n  ")
-        
+
         if 'values' in co:
             s += st_indented(sIndent,"            </Group>\n")
         s += st_indented(sIndent,"        <EmptySpace max=\"-2\" attributes=\"0\"/>\n")
@@ -522,14 +522,14 @@ def write_subComponents(out,sIndent,pName,tName,commands):
         cHelp = ""
         if 'cHelp' in co and (co['cHelp'] != None or co['cHelp'] ==""):
             cHelp = co['cHelp']
-        
-        write_command_component(out,sIndent+2,c,cName,cType,None,None,cHelp,None,False)        
-    
+
+        write_command_component(out,sIndent+2,c,cName,cType,None,None,cHelp,None,False)
+
         if 'values' in co:
             v       = ""
             vType   = co['values']['vType']
             v       = u.create_value_name(pName,tName,cName,vType)
-            write_command_component(out,sIndent+2,v,cName,vType,None,None,cHelp,co['values'],False)        
+            write_command_component(out,sIndent+2,v,cName,vType,None,None,cHelp,co['values'],False)
     s = st_indented(sIndent,"  </SubComponents>\n")
     out.write(s)
 
@@ -539,7 +539,7 @@ def write_command_component(out,sIndent,name,text,bType,hSize,rgbColors,bHelp,vC
     isLabel = u.is_a_label(bType)
     isCombo = u.is_a_combo(bType)
     val     = ""
-    
+
     s = ""
     if isLabel or isText or vCom != None:
         s += st_indented(sIndent,"<Component class=\"javax.swing."+u.get_value_java_type(bType)+"\" name=\""+name+"\">\n")
@@ -563,7 +563,7 @@ def write_command_component(out,sIndent,name,text,bType,hSize,rgbColors,bHelp,vC
 
     if (isLabel or isText) and vCom != None:
         if 'vValues' in vCom:
-            val = vCom['vValues']
+            val = str(vCom['vValues'])
             s += st_indented(sIndent,"    <Property name=\"text\" type=\"java.lang.String\" value=\""+val+"\"/>\n")
 
     if hSize != None :
@@ -576,13 +576,13 @@ def write_command_component(out,sIndent,name,text,bType,hSize,rgbColors,bHelp,vC
         s += st_indented(sIndent,"    <Property name=\"preferredSize\" type=\"java.awt.Dimension\" editor=\"org.netbeans.beaninfo.editors.DimensionEditor\">\n")
         s += st_indented(sIndent,"      <Dimension value=\"["+str(hSize)+", 29]\"/>\n")
         s += st_indented(sIndent,"    </Property>\n")
-    
+
     if rgbColors != None :
         if len(rgbColors) == 3:
             s += st_indented(sIndent,"    <Property name=\"foreground\" type=\"java.awt.Color\" editor=\"org.netbeans.beaninfo.editors.ColorEditor\">\n")
             s += st_indented(sIndent,"      <Color blue=\""+str(rgbColors[2])+"\" green=\""+str(rgbColors[1])+"\" red=\""+str(rgbColors[0])+"\" type=\"rgb\"/>\n")
             s += st_indented(sIndent,"    </Property>\n")
-    
+
     if isSpin:
         vDefault    = vCom['vDefault']
         vMin        = vCom['vMin']
@@ -597,7 +597,7 @@ def write_command_component(out,sIndent,name,text,bType,hSize,rgbColors,bHelp,vC
         s += st_indented(sIndent,"        <Dimension value=\"[115, 28]\"/>\n")
         s += st_indented(sIndent,"    </Property>\n")
 
-    
+
     if isCombo:
         val = ', '.join(vCom['vValues'])
         s += st_indented(sIndent,"    <Property name=\"model\" type=\"javax.swing.ComboBoxModel\" editor=\"org.netbeans.modules.form.editors2.ComboBoxModelEditor\">\n")
@@ -609,15 +609,15 @@ def write_command_component(out,sIndent,name,text,bType,hSize,rgbColors,bHelp,vC
         s += st_indented(sIndent,"      </StringArray>\n")
         s += st_indented(sIndent,"    </Property>\n")
 
-    
+
     s += st_indented(sIndent,"  </Properties>\n")
-    
+
     if bHelp != '':
         bHelp = u.clean_help_text(bHelp)
         s += st_indented(sIndent,"  <AccessibilityProperties>\n")
         s += st_indented(sIndent,"    <Property name=\"AccessibleContext.accessibleDescription\" type=\"java.lang.String\" value=\""+bHelp+"\"/>\n")
         s += st_indented(sIndent,"  </AccessibilityProperties>\n")
-    
+
     tab = u.get_java_eventHandler(bType)
 
     if len(tab)>0:
@@ -628,11 +628,11 @@ def write_command_component(out,sIndent,name,text,bType,hSize,rgbColors,bHelp,vC
 
     s += st_indented(sIndent,"</Component>\n")
     out.write(s)
-    
+
 def write_close_form(out,yml):
     out.write(  "  </SubComponents>\n"+
                 "</Form>")
 
 def st_indented(sIndent,st):
     return st.rjust(sIndent+len(st))
-    
+

@@ -33,6 +33,7 @@ TO DO :
 - change OneConnectorOnlyFor and SolelyConnectors for true and false
 - If isMenu is false, change button to box
 
+- update biologic type depending on a directory
 - check if tooltype is added in editor form and file
 - if imputs is empty
 - Fixed to not move the buttons (reset/stop/run)
@@ -58,27 +59,29 @@ date    = (time.strftime("%d-%m-%Y"))
 kword   = "armadilloWF"
 
 def main(argv):
-    inputFile = ''
-    isTest    = False
+    armaDir     = ''
+    inputFile   = ''
+    biologicDir = ''
+
     try:
-        opts, args = getopt.getopt(argv,"hty:",["help"])
+        opts, args = getopt.getopt(argv,"hy:d:b:",["help"])
     except getopt.GetoptError:
-        print_help()
-        sys.exit(2)
+        u.print_help_exit()
     for opt, arg in opts:
         if opt == '-h' or opt == '--help':
-            print_help()
-            sys.exit()
-        elif opt in ("-t"):
-            isTest = True
+            u.print_help_exit()
         elif opt in ("-y"):
             inputFile = arg
-    
+        elif opt in ("-d"):
+            armaDir = arg
+        elif opt in ("-b"):
+            biologicDir = arg
+
     if inputFile == '':
-        inputFile = 'inputs/repeatMasker.yml'
+        inputFile = './inputs/repeatMasker.yml'
         print 'WARNING =>\tThe file used will be '+inputFile
-    
-    if os.path.isfile(inputFile): 
+
+    if os.path.isfile(inputFile):
         yml = yaml.safe_load("")
         with open(inputFile, 'r') as stream:
             try:
@@ -86,22 +89,21 @@ def main(argv):
                 print('loaded')
             except yaml.YAMLError as exc:
                 print(exc)
-        
+                raise SystemExit
+
         if yml is not None:
             # Add in yaml
             yml['author']   = author
             yml['date']     = date
             yml['kword']    = kword
-        
-        
+
             out = test.test_yml_file(yml)
             if out == "":
-                isTest = True
                 u.update_command_opposites_names(yml)
-                pgrm.create_program_file(yml,isTest)
-                prop.create_properties_file(yml,isTest)
-                fileEdit.create_java_editor_file(yml,isTest)
-                formEdit.create_java_editor_form(yml,isTest)
+                pgrm.create_program_file(yml,armaDir)
+                prop.create_properties_file(yml,armaDir)
+                fileEdit.create_java_editor_file(yml,armaDir)
+                formEdit.create_java_editor_form(yml,armaDir)
                 print('created')
             else:
                 print out
@@ -110,14 +112,13 @@ def main(argv):
         print "File not found"
         raise SystemExit
 
-def print_help():
-    print   (__file__+' [options]\n'+
-            '[-h,--help]\tHelp\n'+
-            '[-t,--test]\tAs test\n'+
-            '[-y <input yanl file>]\tdirectory to yaml file\n')
-            
-if __name__ == '__main__': 
+if __name__ == '__main__':
+    main (sys.argv[1:])
+    """
     if len(sys.argv)>1:
+        print 'yes1'
         main (sys.argv[1:])
     else:
-        print_help()
+        print 'yes2'
+        u.print_help_exit()
+    """

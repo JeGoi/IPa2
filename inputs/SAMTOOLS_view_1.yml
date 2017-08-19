@@ -5,7 +5,7 @@ Program:
       ExecutableLinux   : /usr/bin/docker
       ExecutableMacOSX  : docker
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
-    menu                : 'NGS: SAMTOOLS’
+    menu                : 'NGS: SAMTOOLS'
     numImputs           : 1
     outputPath          : ./results/SAMTOOLS/view/
     publication         :
@@ -28,7 +28,7 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    :
     command2Call        :
-    extention           :
+    extension           :
 
   - type                : BamFile
     connector           : 2
@@ -36,7 +36,7 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    :
     command2Call        :
-    extention           :
+    extension           :
 
   - type                : CramFile
     connector           : 2
@@ -44,16 +44,16 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    :
     command2Call        :
-    extention           :
+    extension           :
 Outputs:
   - type            : SamFile
     connectorText   : Outfile
     command2Call    : >
-    extention       : .sam
+    extension       : .sam
   - type            : BamFile
     connectorText   : Outfile
     command2Call    : >
-    extention       : .bam
+    extension       : .bam
 Menus:
   - name    : Default Options
     isMenu  : true

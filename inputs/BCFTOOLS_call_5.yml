@@ -5,7 +5,7 @@ Program:
       ExecutableLinux   : /usr/bin/docker
       ExecutableMacOSX  : docker
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
-    menu                : 'NGS: BFCTOOLS’
+    menu                : 'NGS: BFCTOOLS'
     numImputs           : 2
     outputPath          : ./results/BFCTOOLS/call/
     publication         :
@@ -29,7 +29,7 @@ Inputs:
     OneConnectorOnlyFor : 3
     SolelyConnectors    : 3
     command2Call        :
-    extention           :
+    extension           : .bed
 
   - type                : SamFile
     connector           : 2
@@ -37,7 +37,7 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    : 2
     command2Call        :
-    extention           :
+    extension           : .sam
 
   - type                : BamFile
     connector           : 2
@@ -45,7 +45,7 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    : 2
     command2Call        :
-    extention           : .bam
+    extension           : .bam
 
   - type                : CramFile
     connector           : 2
@@ -53,12 +53,12 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    : 2
     command2Call        :
-    extention           : .cram
+    extension           : .cram
 Outputs:
   - type            : TextFile
     connectorText   : Outfile
     command2Call    :
-    extention       : .txt
+    extension       : .txt
 Menus:
   - name    : Default Options
     isMenu  : true

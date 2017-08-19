@@ -5,11 +5,11 @@ Program:
       ExecutableLinux   : /usr/bin/docker
       ExecutableMacOSX  : docker
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
-    menu                : 'NGS: SAMTOOLS’
+    menu                : 'NGS: SAMTOOLS'
     numImputs           : 1
     outputPath          : ./results/SAMTOOLS/index/
     publication         :
-    helpSupplementary   : Index a coordinate-sorted BAM or CRAM file for fast random access. (Note that this does not work with SAM files even if they are bgzip compressed — to index such files, use tabix(1) instead.)
+    helpSupplementary   : Index a coordinate-sorted BAM or CRAM file for fast random access. (Note that this does not work with SAM files even if they are bgzip compressed - to index such files, use tabix(1) instead.)
     desc                :
     website             :
     webServices         :
@@ -28,7 +28,7 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    :
     command2Call        :
-    extention           : .bam
+    extension           : .bam
 
   - type                : CramFile
     connector           : 2
@@ -36,20 +36,20 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    :
     command2Call        :
-    extention           : .cram
+    extension           : .cram
 Outputs:
   - type            : BamFile
     connectorText   : Outfile
     command2Call    :
-    extention       : .bam.bai
+    extension       : .bam.bai
   - type            : CramFile
     connectorText   : Outfile
     command2Call    :
-    extention       : .cram.crai
+    extension       : .cram.crai
   - type            : BamFile
     connectorText   : Outfile
     command2Call    :
-    extention       : .bam.csi
+    extension       : .bam.csi
 Menus:
   - name    : Default Options
     isMenu  : true

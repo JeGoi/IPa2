@@ -14,8 +14,18 @@ from os.path import isfile, join
 
 # Util functions
 testDirectory = "./outputs/"
-armaDir       = "../../armadillo2-master"
-# Test on the connector
+
+def print_help_exit():
+    print_help()
+    sys.exit(2)
+
+def print_help():
+    print   (__file__+' [options]\n'+
+            '[-h,--help]\tHelp\n'+
+            '[-y <input yanl file>]\tdirectory to yaml file\n'+
+            '[-d <Armadillo directory>]\tdirectory to Armadillo root\n')
+
+# Test on the connector range
 def connector_range(name,val):
     if 2 <= val <= 4:
         return True
@@ -41,31 +51,25 @@ def print_tab_values(values):
 #
 # Get Paths
 #
-def define_edit_path(isTest):
-    # Need dir to armadillo
-    if (isTest):
-        edit = testDirectory
-    else:
-        edit = armaDir+"/src/editors/"
-    return edit
+def define_edit_path(a):
+    if a == '':
+        return testDirectory
+    return a+"/src/editors/"
 
-def define_prop_path(isTest):
-    if (isTest):
-        prop = testDirectory
-    else:
-        prog = armaDir+"/data/properties/"
-    return prop
+def define_prop_path(a):
+    if a == '':
+        return testDirectory
+    return a+"/data/properties/"
 
-def define_biol_path(isTest):
-    biol     = armaDir+"/src/biologic/"    
-    return biol
+def define_biol_path(a):
+    if a != '':
+        return a+"/src/biologic/"
+    return a
 
-def define_prog_path(isTest):
-    if (isTest):
-        prog = testDirectory
-    else:
-        prog = armaDir+"/src/programs/"
-    return prog
+def define_prog_path(a):
+    if a == '':
+        return testDirectory
+    return a+"/src/programs/"
 
 def get_armadillo_biologic_files_name():
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
@@ -120,7 +124,7 @@ def get_argument_text(s):
     if m:
         return (m.group(1))
     else:
-        return "WRONG" 
+        return "WRONG"
 
 def create_initials(s):
     o = s.title()
@@ -141,6 +145,8 @@ def change_symboles_by_names(s):
     o = o.replace("=","EQUALSYMBOL")
     o = o.replace("_","UNDERSCORESYMBOL")
     o = o.replace("-","HYPHENSYMBOL")
+    o = o.replace("+","PLUS")
+    o = o.replace(".","DOT")
     return o
 
 def remove_hyphen(s):
@@ -306,7 +312,7 @@ def return_java_byte(v):
         return '(byte)'+str(v)
     else:
         return v
-    
+
 def vType_is_int(vType,vDefault,vMin,vMax,vJump,isText):
     # Have remove 2 extrems values
     if vDefault ==  '' or vDefault == None:
@@ -321,7 +327,7 @@ def vType_is_int(vType,vDefault,vMin,vMax,vJump,isText):
         return string_range_values(vType,vDefault,vMin,vMax,vJump)
     else:
         return str(vDefault)+','+str(vMin)+','+str(vMax)+','+str(vJump)
-    
+
 def vType_is_lon(vType,vDefault,vMin,vMax,vJump,isText):
     # Have remove 2 extrems values
     if vDefault ==  '' or vDefault == None:
@@ -431,7 +437,7 @@ def return_java_short(v):
         return '(short)'+str(v)
     else:
         return v
-    
+
 def vType_is_boo(vType,vDefault,vMin,vMax,vJump,isText):
     # Have remove 2 extrems values
     if vDefault ==  '' or vDefault == None:
@@ -514,7 +520,9 @@ def refactor_components_notTab(pName,Panel):
                     cHelp = Arguments['cHelp']
                 c       = create_button_name(pName,tName,cName,cType)
                 v       = ""
-                if 'values' in Arguments and Arguments['values'] is not None:
+                if 'values' in Arguments and \
+                    Arguments['values'] is not None and \
+                    Arguments['values']['vType'] is not None:
                     cName   = Arguments['name']
                     vCom    = Arguments['values']
                     vType   = vCom['vType']
@@ -650,7 +658,7 @@ def get_tab_per_panel(out, yml):
                     tNameS  = replace_space_by_underscore(tName)
                     tabPerPanel.append(tNameS)
     return tabPerPanel
-    
+
 def get_java_eventHandler(s):
     o = s.upper()
     # Link type options. Default JButton
@@ -721,7 +729,7 @@ def get_java_eventHandler_simple(s):
         "DIR"       : "focus"
     }
     if o in d:
-        
+
         return get_java_eventHandler_correspondances(d[o])
     else:
         print s + "We have a problem"
@@ -733,7 +741,7 @@ def get_java_eventHandler_correspondances(s):
     d = {
         "component" :["componentShown","ComponentListener","ComponentEvent","ComponentShown","java.awt.event."],
         "action"    :["actionPerformed","ActionListener","ActionEvent","ActionPerformed","java.awt.event."],
-        "focus"     :["focusLost","FocusListener","FocusEvent","FocusLost","javax.swing.event."],
+        "focus"     :["focusLost","FocusListener","FocusEvent","FocusLost","java.awt.event."],
         "state"     :["stateChanged","ChangeListener","ChangeEvent","StateChanged","javax.swing.event."]
         }
     if o in d:
@@ -756,9 +764,11 @@ def create_commands_name(yml):
                         cName = Arguments['name']
                         cType = Arguments['cType']
                         c     = create_button_name(pName,tName,cName,cType)
-                        
+
                         v       = ""
-                        if 'values' in Arguments and Arguments['values'] is not None:
+                        if 'values' in Arguments and \
+                            Arguments['values'] is not None and \
+                            Arguments['values']['vType'] is not None:
                             vType   = Arguments['values']['vType']
                             v       = create_value_name(pName,tName,cName,vType)
 
@@ -796,32 +806,33 @@ def update_command_opposites_names(yml):
 def isBiologicType(v):
     v = v.lower()
     tabBiologic = [
-        'alertFile',
-        'alignFile',
         'Alignment',
         'Ancestor',
         'ArffFile',
         'BamFile',
         'BananaFile',
+        'BedFile',
         'Biologic',
+        'Blast',
         'BlastDB',
         'BlastHit',
-        'Blast',
         'CatFile',
         'ChipsFile',
+        'CramFile',
         'CsvFile',
-        'DataSet',
         'DatFile',
+        'DataSet',
         'DiffseqFile',
         'EinvertedFile',
         'EmblFile',
         'Est2genomeFile',
+        'FaidxFile',
         'FastaFile',
         'FastqFile',
         'FileFile',
         'GcgFile',
-        'GenomeFile',
         'Genome',
+        'GenomeFile',
         'HTML',
         'ImageFile',
         'InfoAlignment',
@@ -829,10 +840,9 @@ def isBiologicType(v):
         'InfoSequence',
         'Input',
         'ListSequence',
-        'maskedFile',
         'Matrix',
-        'MiRcheckFoldedmirsFile',
         'MiRNA_MatchesFile',
+        'MiRcheckFoldedmirsFile',
         'Model',
         'MultipleAlignments',
         'MultipleSequences',
@@ -842,31 +852,35 @@ def isBiologicType(v):
         'Output',
         'OutputText',
         'PdbFile',
-        'Phylip_Distance',
         'Phylip',
+        'Phylip_Distance',
         'Phylip_Seqboot',
         'PirFile',
         'PositionToSequence',
         'ProteinAlignment',
-        'Results',
         'RNAFoldFile',
+        'Results',
         'RootedTree',
         'RunWorkflow',
+        'SOLIDFile',
         'SamFile',
         'Sample',
         'Sequence',
-        'SOLIDFile',
         'SwissprotFile',
-        'tblFile',
-        'TextFile',
         'Text',
+        'TextFile',
         'Tree',
         'Unknown',
         'UnrootedTree',
+        'VCFFile',
         'WekaModelFile',
-        'Workflows'
+        'Workflows',
+        'alertFile',
+        'alignFile',
+        'maskedFile',
+        'tblFile'
     ]
-    
+
     for b in tabBiologic:
         if b.lower() == v:
             return True

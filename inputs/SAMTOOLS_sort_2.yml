@@ -5,7 +5,7 @@ Program:
       ExecutableLinux   : /usr/bin/docker
       ExecutableMacOSX  : docker
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
-    menu                : 'NGS: SAMTOOLS’
+    menu                : 'NGS: SAMTOOLS'
     numImputs           : 1
     outputPath          : ./results/SAMTOOLS/sort/
     publication         :
@@ -28,7 +28,7 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    :
     command2Call        :
-    extention           :
+    extension           : .sam
 
   - type                : BamFile
     connector           : 2
@@ -36,7 +36,7 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    :
     command2Call        :
-    extention           :
+    extension           : .bam
 
   - type                : CramFile
     connector           : 2
@@ -44,20 +44,20 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    :
     command2Call        :
-    extention           :
+    extension           : .bam
 Outputs:
   - type            : BamFile
     connectorText   : Outfile
     command2Call    : >
-    extention       : .bam
+    extension       : .bam
   - type            : CramFile
     connectorText   : Outfile
     command2Call    : >
-    extention       : .cram
+    extension       : .cram
   - type            : SamFile
     connectorText   : Outfile
     command2Call    : >
-    extention       : .sam
+    extension       : .sam
 Menus:
   - name    : Default Options
     isMenu  : true
@@ -76,6 +76,8 @@ Menus:
             values:
                 vType   : Text
                 vDefault: PREFIX
+                vValues :
+                    - PREFIX
             tooltip     : Write temporary files to PREFIX.nnnn.bam, or if the specified PREFIX is an existing directory, to PREFIX/samtools.mmm.mmm.tmp.nnnn.bam, where mmm is unique to this invocation of the sort command. By default, any temporary files are written alongside the output file, as out.bam.tmp.nnnn.bam, or if output is to standard output, in the current directory as samtools.mmm.mmm.tmp.nnnn.bam.
             label       :
             oppositeTo  :
@@ -94,7 +96,8 @@ Menus:
                 vJump   :
             tooltip     : Output the header only.
             label       :
-            oppositeTo  : -h
+            oppositeTo  :
+                #- h
             parentOf    :
             selected    :
             cHelp       :

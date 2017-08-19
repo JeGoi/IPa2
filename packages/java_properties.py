@@ -17,8 +17,8 @@ from random import randint
 # in  : get infos from csv
 # out : print infos in java file
 # ===============================================
-def create_properties_file(yml,isTest):
-    progDir     = u.define_prop_path(isTest)
+def create_properties_file(yml,armaDir):
+    progDir     = u.define_prop_path(armaDir)
     filename    = progDir+""+u.get_program_name(yml)+".properties"
     out = open(filename, 'w')
     out.write("#Armadillo Workflow Platform 1.1 (c) Etienne Lord, Mickael Leclercq, Alix Boc,  Abdoulaye Banire Diallo, Vladimir Makarenkov"+
@@ -29,43 +29,44 @@ def create_properties_file(yml,isTest):
                 "\nClassName= programs."+u.get_program_name(yml)+""+
                 "\nEditorClassName= editors."+u.get_program_name(yml)+"Editors"+
                 "\ndebug= false"+
-                "\nfilename= C\:\\armadillo2\\data\\properties\\"+u.get_program_name(yml)+".properties"+
-                "\nVersion= "+u.get_program_version(yml)+"")
-    
+                "\nfilename= C\:\\armadillo2\\data\\properties\\"+u.get_program_name(yml)+".properties")
+    if 'version' in yml['Program']:
+        out.write("\nVersion= "+u.get_program_version(yml)+"")
+
     for paths in yml['Program']['executablePaths']:
         out.write("\n"+paths+"="+yml['Program']['executablePaths'][paths])
-    
+
     out.write("\nHelpSupplementary=")
     if yml['Program']['helpSupplementary']:
         out.write(yml['Program']['helpSupplementary'])
-    
+
     out.write("\nPublication= ")
     if yml['Program']['publication']:
         out.write(yml['Program']['publication'])
-    
+
     out.write("\nDescription= ")
     if yml['Program']['desc']:
         out.write(yml['Program']['desc'])
-    
+
     ObjectID = randint(1000000000,9999999999)
     out.write("\nObjectID="+u.get_program_name(yml)+"_"+str(ObjectID)+""+
                 "\nObjectType=Program"+
                 "\nNoThread=false")
-    
+
     out.write("\nType=")
     if yml['Program']['menu']:
         out.write(yml['Program']['menu'])
-    
+
     out.write("\nNormalExitValue=")
     if yml['Program']['exitValue'] or yml['Program']['exitValue'] == 0:
         out.write(str(yml['Program']['exitValue']))
-    
+
     out.write("\nVerifyExitValue=")
     if yml['Program']['exitValue']:
         out.write('true')
     else:
         out.write('false')
-    
+
     out.write("\nWebServices=")
     if yml['Program']['webServices']:
         out.write(yml['Program']['webServices'])
@@ -73,12 +74,12 @@ def create_properties_file(yml,isTest):
     out.write("\nWebsite=")
     if yml['Program']['website']:
         out.write(yml['Program']['website'])
-    
+
     # Color options
     color = u.get_color(yml)
     out.write("\ncolorMode    = "+color+""+
               "\ndefaultColor = "+color+"")
-    
+
     # Inputs types
     out.write("\n#INPUTS TYPES")
     if len(yml['Inputs']) > 0:
@@ -87,7 +88,7 @@ def create_properties_file(yml,isTest):
         for op in yml['Inputs']:
             if op['type']:
                 out.write("\nInput"+op['type']+"=Connector"+str(op['connector']))
-                
+
             if op['OneConnectorOnlyFor']:
                 if o == "":
                     o = str(op['OneConnectorOnlyFor'])
@@ -111,7 +112,7 @@ def create_properties_file(yml,isTest):
             out.write("\nSolelyConnectors= "+s)
     else:
         out.write("\nNO IMPUTS ??\n")
-    
+
     # Inputs Names
     out.write("\n#INPUTS Connector text")
     tab = ('2','3','4')
@@ -129,12 +130,12 @@ def create_properties_file(yml,isTest):
                             c = c+", "+t
         if c != "":
             out.write("\nConnector"+t+"= "+c)
-    
+
     # Number of inputs
     out.write("\nnbInput= ")
     if yml['Program']['numImputs']:
         out.write(str(yml['Program']['numImputs']))
-    
+
     # Outputs values
     out.write("\n#OUTPUTS OPTIONS"+
               "\nConnector0Output=True"+
@@ -144,7 +145,7 @@ def create_properties_file(yml,isTest):
         for op in yml['Outputs']:
             if op['type']:
                 out.write("\nOutput"+op['type']+"=Connector0")
-    
+
     # Default Values
     out.write("\n#DEFAULT VALUES"+
               "\ndefaultPgrmValues=")
@@ -155,12 +156,14 @@ def create_properties_file(yml,isTest):
             out.write(""+pNameS+"<>true<>")
         else:
             for Tab in Panel['Panel']:
-                
+
                 if 'Arguments' in Tab:
                     tName   = Tab['tab']
                     for Arguments in Tab['Arguments']:
                         cName   = Arguments['name']
-                        if 'values' in Arguments and Arguments['values'] is not None:
+                        if 'values' in Arguments and \
+                            Arguments['values'] is not None and \
+                            Arguments['values']['vType'] is not None:
                             vType   = Arguments['values']['vType']
                             v       = u.create_value_name(pNameS,tName,cName,vType)
                             vDef    = str(Arguments['values']['vDefault'])

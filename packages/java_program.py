@@ -11,8 +11,8 @@ import sys,os
 import yaml
 import util as u
 
-def create_program_file(yml,isTest):
-    progDir     = u.define_prog_path(isTest)
+def create_program_file(yml,armaDir):
+    progDir     = u.define_prog_path(armaDir)
     filename    = progDir+""+u.get_program_name(yml)+".java"
     out = open(filename, 'w')
     write_header(out,yml)
@@ -41,17 +41,17 @@ def write_header(out, yml):
     for op in yml['Inputs']:
         if 'type' in op:
             importBiologicType[op['type']] = ''
-    
+
     for op in yml['Outputs']:
         if 'type' in op:
             importBiologicType[op['type']] = ''
-    
+
     for bio in importBiologicType:
         out.write("import biologic."+bio+";\n")
-    
+
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("import configuration.Docker;\n")
-    
+
     out.write("import biologic.Results;\n"+
                 "import configuration.Util;\n"+
                 "import java.io.File;\n"+
@@ -86,7 +86,7 @@ def write_variables(out, yml):
     out.write("public class "+u.get_program_name(yml)+" extends RunProgram {\n"+
                 "    // CREATE VARIABLES HERE\n"
             )
-    
+
     if 'Docker' in yml and yml['Docker'] is not None:
         if yml['Docker']['dockerName'] == None:
             yml['Docker']['dockerName'] = yml['Docker']['imageName']
@@ -113,7 +113,7 @@ def write_variables(out, yml):
         if 'Docker' in yml and yml['Docker'] is not None:
             out.write("    //private String inputInDo1   = \"\";\n"+
                       "    //private String inputPathDo1 = \"\";\n")
-        
+
     # Write outputs
     out.write("    //OUTPUTS\n")
     if len(yml['Outputs']) > 0:
@@ -130,7 +130,7 @@ def write_variables(out, yml):
         if 'Docker' in yml and yml['Docker'] is not None:
             out.write("    //private String outputInDo1   = \"\";\n"+
                       "    //private String outputPathDo1 = \"\";\n")
-    
+
     # Write Paths
     out.write("    //PATHS\n")
     if yml['Program']['outputPath'] is not "":
@@ -160,18 +160,24 @@ def write_tables_of_commands_per_panel(out, yml):
                         cType   = Arguments['cType']
                         c       = u.create_button_name(pName,tName,cName,cType)
                         v       = ""
-                        if 'values' in Arguments and Arguments['values'] is not None:
+                        if 'values' in Arguments and \
+                            Arguments['values'] is not None and \
+                            Arguments['values']['vType'] is not None:
                             vType   = Arguments['values']['vType']
                             v       = u.create_value_name(pName,tName,cName,vType)
 
                         out.write("        \""+c+"\"")
                         if x < (cSize-1):
-                            if 'values' in Arguments and Arguments['values'] is not None:
+                            if 'values' in Arguments and \
+                                Arguments['values'] is not None and \
+                                Arguments['values']['vType'] is not None:
                                 out.write(",\n        //\""+v+"\",\n")
                             else:
                                 out.write(",\n")
                         else:
-                            if 'values' in Arguments and Arguments['values'] is not None:
+                            if 'values' in Arguments and \
+                                Arguments['values'] is not None and \
+                                Arguments['values']['vType'] is not None:
                                 out.write("//,\n        //\""+v+"\"\n")
                             else:
                                 out.write("\n")
@@ -277,7 +283,7 @@ def write_clean_docker(out):
     out.write("        // TEST Docker initialisation\n"+
                 "        doName = Docker.getContainersVal(doName);\n"+
                 "        if (!dockerInit(outputPath,doSharedFolder,doName,doImage)){\n"+
-                "            Docker.cleanContainers(doName);\n"+
+                "            Docker.cleanContainer(doName);\n"+
                 "            setStatus(status_BadRequirements,\"Not able to initiate docker container\");\n"+
                 "            return false;\n"+
                 "         } else {\n"+
@@ -302,7 +308,7 @@ def write_outputs(out,yml):
     out.write("        //Create ouputs\n")
     outputsSize = len(yml['Outputs'])
     inputsSize = len(yml['Inputs'])
-    
+
     inputsNames = ""
     if inputsSize > 1:
         x = 1
@@ -353,7 +359,7 @@ def write_command_line_creation(out,yml):
         out.write("        com["+str(i)+"]= \"exec \"+doName+\" \"+doPgrmPath;\n")
         i += 1
     out.write("        com["+str(i)+"]= options;\n")
-    
+
     if len(yml['Inputs']) > 0:
         x = 1
         for op in yml['Inputs']:
@@ -364,19 +370,19 @@ def write_command_line_creation(out,yml):
                     inputName = inputName+"InDo"
                 else:
                     inputName = inputName+"Path"
-                inputName = inputName+str(x)                
+                inputName = inputName+str(x)
                 if op['command2Call']:
                     com = op['command2Call']
                     out.write("        if ("+inputName+" != (\"Unknown\") || "+inputName+".isEmpty()) {\n"+
                               "            com["+str(i)+"]= \""+com+" \"+"+inputName+";\n"+
                               "        }\n")
                 else:
-                    out.write("        com["+str(i)+"]= "+inputName+"\n")
+                    out.write("        com["+str(i)+"]= "+inputName+";\n")
             x = x+1
     else:
         i += 1
         out.write("        com["+str(i)+"]= inputPath1;\n")
-    
+
     if len(yml['Outputs']) > 0:
         x = 1
         for op in yml['Outputs']:
@@ -394,7 +400,7 @@ def write_command_line_creation(out,yml):
     else:
         i += 1
         out.write("        //com["+str(i)+"]=outputPath1;\n")
-    
+
     out.write("        return com;\n"+
                 "    }\n"+
                 "\n"+

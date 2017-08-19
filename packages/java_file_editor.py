@@ -14,11 +14,11 @@ import util as u
 # ===============================================
 #     FUNCTION create Java File Editor
 # ===============================================
-def create_java_editor_file(yml,isTest):
-    progDir     = u.define_edit_path(isTest)
+def create_java_editor_file(yml,armaDir):
+    progDir     = u.define_edit_path(armaDir)
     filename    = progDir+""+u.get_program_name(yml)+"Editors.java"
     out = open(filename, 'w')
-    
+
     yml['FrameDefaultVariables'] = {
         "name"  : "jTextField",
         "rename": "jButton",
@@ -27,7 +27,7 @@ def create_java_editor_file(yml,isTest):
         "stop"  : "jButton",
         "run"   : "jButton"
     }
-    
+
     write_header_file(out,yml)
     write_setDefaultCloseOperation(out,yml)
     write_events(out,yml)
@@ -137,7 +137,7 @@ def write_header_variables(out,yml):
                 "        Menu_Buttons = new javax.swing.ButtonGroup();\n")
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("        docker_jButton = new javax.swing.JButton();\n")
-                
+
     out.write("        how_jButton      = new javax.swing.JButton();\n"+
               "        "+u.get_program_name(yml)+"_tab = new javax.swing.JTabbedPane();\n"+
               "        general_jPanel1  = new javax.swing.JPanel();\n"+
@@ -160,12 +160,12 @@ def write_setDefaultCloseOperation(out,yml):
     out.write("\n"+
               "        pack();\n"
               "    }\n")
-    
+
 def write_boxes_buttons_values(out,yml):
 
     if 'Docker' in yml and yml['Docker'] is not None:
         write_box_and_button(out,"docker_jButton","Docker Editor",'JButton','Access to the docker editor')
-    
+
     out.write("        "+u.get_program_name(yml)+"_tab.addComponentListener(new java.awt.event.ComponentAdapter() {\n"+
                 "            public void componentShown(java.awt.event.ComponentEvent evt) {\n"+
                 "                "+u.get_program_name(yml)+"_tab_ComponentShown(evt);\n"+
@@ -184,7 +184,7 @@ def write_boxes_buttons_values(out,yml):
 
     write_box_and_button(out,"name_jLabel","(re)Name",'label','Name Box')
     write_box_and_button(out,"name_jTextField","Name",'txt','Rename the box here')
-    
+
     for Panel in yml['Menus']:
         if Panel['isMenu']:
             write_menu_options(out,Panel['name'])
@@ -208,13 +208,15 @@ def write_pgrm_box_and_button(out,yml):
                         cType   = Arguments['cType']
                         cText   = u.remove_hyphen(cName)
                         cHelp   = Arguments['tooltip']
-                        
+
                         c       = u.create_button_name(pName,tName,cName,cType)
                         v       = ""
-                        
+
                         write_box_and_button(out,c,cText,cType,cHelp)
-                        
-                        if 'values' in Arguments and Arguments['values'] is not None:
+
+                        if 'values' in Arguments and \
+                            Arguments['values'] is not None and \
+                            Arguments['values']['vType'] is not None:
                             vCom    = Arguments['values']
                             vType   = vCom['vType']
                             v       = u.create_value_name(pName,tName,cName,vType)
@@ -226,7 +228,7 @@ def write_connected_value(out,v,cText,vType,cHelp,vCom):
     isLabel = u.is_a_label(vType)
     isCombo = u.is_a_combo(vType)
     val     = ""
-    
+
     if isSpin:
         vDefault    = vCom['vDefault']
         vMin        = vCom['vMin']
@@ -238,12 +240,12 @@ def write_connected_value(out,v,cText,vType,cHelp,vCom):
         val         = "\""+'", "'.join(vCom['vValues'])+"\""
         out.write("        "+v+".setModel(new javax.swing.DefaultComboBoxModel(new String[] { "+val+" }));\n")
     if isText or isLabel:
-        val         = vCom['vValues']
+        val         = str(vCom['vValues'])
         out.write("        "+v+".setText(\""+val+"\");\n")
-        
+
     out.write("        "+v+".setName(\""+v+"\"); // NOI18N\n"+
               "        "+v+".getAccessibleContext().setAccessibleDescription(\""+cHelp+"\");\n")
-        
+
     if isSpin or isText or isLabel:
         out.write("        "+v+".setPreferredSize(new java.awt.Dimension(")
         if isSpin:
@@ -251,7 +253,7 @@ def write_connected_value(out,v,cText,vType,cHelp,vCom):
         if isText or isLabel:
             out.write("220")
         out.write(", 28));\n")
-    
+
     if isText:
         out.write("        "+v+".addFocusListener(new java.awt.event.FocusAdapter() {\n"+
                   "            public void focusLost(java.awt.event.FocusEvent evt) {\n"+
@@ -264,7 +266,7 @@ def write_connected_value(out,v,cText,vType,cHelp,vCom):
                   "                "+v+"_StateChanged(evt);\n"+
                   "            }\n"+
                   "        });\n")
-        
+
     if isCombo or isText:
         out.write("        "+v+".addActionListener(new java.awt.event.ActionListener() {\n"+
                   "            public void actionPerformed(java.awt.event.ActionEvent evt) {\n"+
@@ -295,7 +297,7 @@ def write_box_and_button(out,cName,cText,cType,cHelp):
                   "            }\n"+
                   "        });\n")
     out.write("\n")
-    
+
 def write_specific_button(out,cName,cText,bType,bHelp,bLength,bColor):
     # look how merge it with function: add_box_and_button
     out.write("        "+cName+".setText(\""+cText+"\");\n"+
@@ -310,7 +312,7 @@ def write_specific_button(out,cName,cText,bType,bHelp,bLength,bColor):
               "                "+cName+"_ActionPerformed(evt);\n"+
               "            }\n"+
               "        });\n")
-    
+
 def write_menu_options(out,mName):
     mNameS = u.name_without_space(mName)
     out.write(  "        Menu_Buttons.add("+mNameS+");\n"+
@@ -336,7 +338,7 @@ def write_organize_boxes_buttons_values(out,yml):
                     tName = Tab['tab']
                     if 'Arguments' in Tab:
                         write_jPanel_isTab(out,pName,tName,Tab['Arguments'],pLen)
-                     
+
         if pLen > 1 and Panel['isTab']: # Means need a tabs
             pNameI = u.create_initials(pName)
             tmName = pNameI+"_"+pNameI
@@ -359,7 +361,7 @@ def write_tab_in_jPanel(out,pNameI,tmName):
 
 def write_jPanel(out,pName,Panel):
     (tabBV,dictBV,infB,infV) = u.refactor_components_notTab(pName,Panel)
-    
+
     pNameI  = u.create_initials(pName)
     out.write(  "        javax.swing.GroupLayout "+pNameI+"_Layout = new javax.swing.GroupLayout("+pNameI+"_JPanel);\n"+
                 "        "+pNameI+"_JPanel.setLayout("+pNameI+"_Layout);\n"+
@@ -463,12 +465,12 @@ def write_general_panel(out,yml):
                 "                        .addComponent(name_jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)\n"+
                 "                        .addGap(18, 18, 18)\n"+
                 "                        .addComponent(name_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))\n")
-    
+
     allMenu = []
     for Panel in yml['Menus']:
         if Panel['isMenu']:
             allMenu.append(u.name_without_space(Panel['name']))
-    
+
     mLen = len(allMenu)
     x = 0
     if mLen>1:
@@ -530,8 +532,8 @@ def write_general_panel(out,yml):
             if x%2 != 0:
                 out.write(  "                        )\n")
         x+=1
-        
-        
+
+
     out.write(  "                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)\n"+
                 "                .addComponent(main_jScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)\n"+
                 "                .addContainerGap())\n"+
@@ -549,7 +551,7 @@ def write_program_overview(out,yml):
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("                .addComponent(docker_jButton)\n"+
                   "                .addGap(18, 18, 18)\n")
-    
+
     out.write("                .addComponent(how_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))\n"+
               "                .addComponent("+u.get_program_name(yml)+"_tab, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)\n"+
               "        );\n"+
@@ -559,7 +561,7 @@ def write_program_overview(out,yml):
               "                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)\n")
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("                    .addComponent(docker_jButton)\n")
-    
+
     out.write("                    .addComponent(close_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)\n"+
               "                    .addComponent(how_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))\n"+
               "                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)\n"+
@@ -575,7 +577,7 @@ def write_program_overview(out,yml):
               "            }\n"+
               "        });\n"+
               "        main_jScroll.setViewportView(options_tab_panel);\n")
-    
+
 def write_nested_tabs(out,yml):
     for Panel in yml['Menus']:
         pNameI = u.create_initials(Panel['name'])
@@ -601,7 +603,7 @@ def write_events(out,yml):
                 "    private void "+u.get_program_name(yml)+"_tab_ComponentShown(java.awt.event.ComponentEvent evt){//GEN-FIRST:event_"+u.get_program_name(yml)+"_tab_ComponentShown\n"+
                 "        // TODO add your handling code here:\n"+
                 "    }//GEN-LAST:event_"+u.get_program_name(yml)+"_tab_ComponentShown\n"+
-                "    \n"+                
+                "    \n"+
                 "    private void how_jButton_ActionPerformed(java.awt.event.ActionEvent evt){//GEN-FIRST:event_how_jButton_ActionPerformed\n"+
                 "        // TODO add your handling code here:\n"+
                 "        HelpEditor help = new HelpEditor(this.frame, false, properties);\n"+
@@ -675,19 +677,19 @@ def write_event_menu(out,yml):
                     else :
                         out.write(  " &&\n            properties.isSet("+menu2+".getName())")
                     p+=1
-                    
+
             out.write(  "){\n")
 
             for menu2 in allMenu:
                 if menu != menu2:
                     out.write(  "            properties.remove("+menu2+".getName());\n")
-            
+
             out.write(  "        }\n"+
                         "        Util.buttonEventSpinner(properties,"+menu+",null);\n"+
                         "        menuFields(properties);\n")
         out.write(  "    }//GEN-LAST:event_"+menu+"_ActionPerformed\n"+
                     "    \n")
-            
+
 def  write_event_commands(out,yml):
     for Panel in yml['Menus']:
         pName   =  Panel['name']
@@ -700,11 +702,13 @@ def  write_event_commands(out,yml):
                         cType     = Arguments['cType']
                         childrens = Arguments['parentOf']
                         opposites = Arguments['oppositeTo']
-                        
+
                         c       = u.create_button_name(pName,tName,cName,cType)
                         v       = ""
-                        
-                        if 'values' in Arguments and Arguments['values'] is not None:
+                        vType   = ""
+                        if 'values' in Arguments and \
+                            Arguments['values'] is not None and \
+                            Arguments['values']['vType'] is not None:
                             vCom    = Arguments['values']
                             vType   = vCom['vType']
                             v       = u.create_value_name(pName,tName,cName,vType)
@@ -722,11 +726,11 @@ def write_event_command(out,c,cType,v,vType,childrens,opposites):
         write_event_command_is_a_parent(out,c,childrens)
     if opposites != None :
         write_event_command_is_opposite_to(out,opposites)
-    
+
     vType = u.get_value_java_type(vType)
     isCheckBox = u.is_a_box(cType)
     isButton   = u.is_a_button(cType)
-    
+
     if v == "":
         v = 'null'
     if isCheckBox:
@@ -761,7 +765,7 @@ def write_event_command_is_a_parent(out,c,childrens):
             out.write(  "                "+childrens[child]+".setEnabled(false);\n")
     out.write(  "        }\n"+
                 "\n")
-        
+
 def write_event_command_is_opposite_to(out,opposites):
     x=0
     oLen = len(opposites)
@@ -785,7 +789,7 @@ def write_event_command_dir(out,c,cType,v,vType):
 
 def write_event_command_value(out,c,cType,v,vType):
     d = u.get_java_eventHandler_simple(vType)
-    
+
     vType = u.get_value_java_type(vType)
     isCheckBox = u.is_a_box(cType)
     isButton   = u.is_a_button(cType)
@@ -800,7 +804,7 @@ def write_event_command_value(out,c,cType,v,vType):
 
     out.write(  "    private void "+v+"_"+d[3]+"("+d[4]+""+d[2]+" evt) {//GEN-FIRST:event_"+v+"_"+d[0]+"\n"+
                 "        // TODO add your handling code here:\n")
-    
+
     if isCheckBox:
         if vType == "" or 'Spinner' in vType:
             out.write("        Util.boxEventSpinner(properties,"+c+","+v+");\n")
@@ -818,7 +822,24 @@ def write_event_command_value(out,c,cType,v,vType):
 
     out.write(  "    }//GEN-LAST:event_"+v+"_"+d[0]+"\n"+
                 "\n")
-        
+
+    if 'TextField' in vType:
+        action = "ActionPerformed"
+        out.write(  "    private void "+v+"_ActionPerformed("+d[4]+"ActionEvent evt) {//GEN-FIRST:event_"+v+"_"+d[0]+"\n"+
+                    "        // TODO add your handling code here:\n")
+
+        if isCheckBox:
+            if 'TextField' in vType:
+                out.write("        Util.boxEventText(properties,"+c+","+v+");\n")
+        if isButton:
+            if vType == "" or 'Spinner' in vType:
+                out.write("        Util.buttonEventSpinner(properties,"+c+","+v+");\n")
+            if 'TextField' in vType:
+                out.write("        Util.buttonEventText(properties,"+c+","+v+");\n")
+
+        out.write(  "    }//GEN-LAST:event_"+v+"_"+d[0]+"\n"+
+                    "\n")
+
 def write_event_command_dir_value(out,c,cType,v,vType):
     print 'is a directory. Need to be done'
     out.write(  "        JFileChooser d;\n"+
@@ -831,7 +852,7 @@ def write_event_command_dir_value(out,c,cType,v,vType):
         out.write("        d.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);\n")
     else:
         out.write("        d.setFileSelectionMode(JFileChooser.FILES_ONLY);\n")
-                            
+
     out.write("        d.setAcceptAllFileFilterUsed(false);\n")
     if v.endswith('DirFiles'):
         out.write("        d.setMultiSelectionEnabled(true);\n")
@@ -848,8 +869,8 @@ def write_event_command_dir_value(out,c,cType,v,vType):
                 "            properties.remove("+v+".getName());\n"+
                 "            Util."+ctype+"EventText(properties,"+c+","+v+");\n"+
                 "        }\n")
-            
-            
+
+
 # ===============================================
 # write_functions
 # ===============================================
@@ -883,7 +904,7 @@ def write_objects_list_dictionaries(out,yml):
             p += 1
     out.write("    }\n"+
               "\n")
-    
+
 def write_objects_dictionaries(out,yml):
     out.write(  "    /*******************************************************************\n"+
                 "     * Perpare Dictionaries\n"+
@@ -908,14 +929,16 @@ def write_objects_dictionaries(out,yml):
                         c       = u.create_button_name(pName,tName,cName,cType)
                         vType   = ""
                         v       = "null"
-                        if 'values' in Arguments and Arguments['values'] is not None:
+                        if 'values' in Arguments and \
+                            Arguments['values'] is not None and \
+                            Arguments['values']['vType'] is not None:
                             vType   = Arguments['values']['vType']
                             v       = u.create_value_name(pName,tName,cName,vType)
 
                         cType = u.get_box_type(cType)
                         if vType != "":
                             vType = u.get_value_java_type(vType)
-                        
+
                         if 'CheckBox' in cType:
                             if vType == "" or 'Spinner' in vType:
                                 if Panel['isMenu']:
@@ -932,7 +955,7 @@ def write_objects_dictionaries(out,yml):
                                     out.write("        DictMenuCBC"+str(p)+".put("+c+","+v+");\n")
                                 else:
                                     out.write("        DictCBC"+str(p)+".put("+c+","+v+");\n")
-                            
+
                         if 'Button' in cType:
                             if vType == "" or 'Spinner' in vType:
                                 if Panel['isMenu']:
@@ -947,8 +970,8 @@ def write_objects_dictionaries(out,yml):
             p += 1
     out.write("    }\n"+
               "\n")
-    
-    
+
+
 def write_configuration_object_properties(out,yml):
     out.write("\n    /*******************************************************************\n"+
                 "     * Set the configuration properties for this object\n"+
@@ -1035,7 +1058,7 @@ def write_default_program_values(out,yml):
                 out.write("        && ")
             out.write("!(properties.isSet("+menu+".getName()))\n")
             p+=1
-        
+
         out.write("        ){\n"+
                   "            b = false;\n"+
                   "        }\n"+
@@ -1043,10 +1066,10 @@ def write_default_program_values(out,yml):
                   "        Util.getDefaultPgrmValues(properties,b);\n")
     else:
         out.write("        //Util.getDefaultPgrmValues(properties,boolean to test the presence of a default value);\n")
-    
+
     out.write("    }\n"+
               "    \n")
-    
+
 def write_menu_fields(out,yml):
     allMenu    = []
     allNotMenu = []
@@ -1075,7 +1098,7 @@ def write_menu_fields(out,yml):
             for menu in allMenu:
                 out.write("            Util.enabled_Advanced_Options(properties,false,listDictsMenu"+menu[1]+");\n")
             out.write("        }\n")
-            
+
         if 'Panel' in Panel and Panel['isMenu']:
             out.write("        else if (properties.isSet("+pNameS+".getName())){\n"+
                       "            "+pNameS+".setSelected(true);\n")
@@ -1087,10 +1110,10 @@ def write_menu_fields(out,yml):
                     out.write("true")
                 out.write(",listDictsMenu"+menu[1]+");\n")
             out.write("        }\n")
-    
+
     for notMenu in allNotMenu:
         out.write("        Util.enabled_Advanced_Options(properties,true,listDicts"+notMenu[1]+");\n")
-        
+
     out.write("    }\n"+
               "\n")
 
@@ -1110,7 +1133,7 @@ def write_save_image(out,yml):
                 "        }\n"+
                 "    }\n"+
                 "\n")
-                
+
 # ===============================================
 # write_bottom_variables
 # ===============================================
@@ -1148,7 +1171,7 @@ def write_java_variables(out,yml,where):
     #
     # Always add main scroll and tab panel
     #
-    
+
     if (where == "header"):
         out.write("        main_jScroll = new javax.swing.JScrollPane();\n")
         out.write("        options_tab_panel = new javax.swing.JTabbedPane();\n")
@@ -1158,9 +1181,9 @@ def write_java_variables(out,yml,where):
 
     #
     # Think about adding or not a default option
-    # Now, a default option without data is needed then add extra data 
+    # Now, a default option without data is needed then add extra data
     #
-    
+
     for Panel in yml['Menus']:
         pName = Panel['name']
         pNameI = u.create_initials(pName)
@@ -1170,7 +1193,7 @@ def write_java_variables(out,yml,where):
                 out.write("        "+pNameI+"_JPanel = new javax.swing.JPanel();\n")
             if (where == "bottom"):
                 out.write("    private javax.swing.JPanel "+pNameI+"_JPanel;\n")
-            
+
             pLen = len(Panel['Panel'])
             if pLen>1 and Panel['isTab']: # Means need a tabs
                 tmName = pNameI+"_"+pNameI
@@ -1187,13 +1210,13 @@ def write_java_variables(out,yml,where):
                             out.write("        "+pNameI+"_"+tNameI+"_JPanel = new javax.swing.JPanel();\n")
                         if (where == "bottom"):
                             out.write("    private javax.swing.JPanel "+pNameI+"_"+tNameI+"_JPanel;\n")
-                    
+
                     if not Panel['isTab']: # Means need a Label instead of tabs
                         if (where == "header"):
                             out.write("        "+pNameI+"_"+tNameI+"_JLabel = new javax.swing.JLabel();\n")
                         if (where == "bottom"):
                             out.write("    private javax.swing.JLabel "+pNameI+"_"+tNameI+"_JLabel;\n")
-                    
+
                     for Arguments in Tab['Arguments']:
                         cName   = Arguments['name']
                         cType   = Arguments['cType']
@@ -1202,7 +1225,9 @@ def write_java_variables(out,yml,where):
                             out.write("        "+c+" = new javax.swing."+u.get_box_type(cType)+"();\n")
                         if (where == "bottom"):
                             out.write("    private javax.swing."+u.get_box_type(cType)+" "+c+";\n")
-                        if 'values' in Arguments and Arguments['values'] is not None:
+                        if 'values' in Arguments and \
+                            Arguments['values'] is not None and \
+                            Arguments['values']['vType'] is not None:
                             v       = ""
                             vType   = Arguments['values']['vType']
                             v       = u.create_value_name(pName,tName,cName,vType)

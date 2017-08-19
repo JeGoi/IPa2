@@ -5,7 +5,7 @@ Program:
       ExecutableLinux   : /usr/bin/docker
       ExecutableMacOSX  : docker
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
-    menu                : 'NGS: SAMTOOLS’
+    menu                : 'NGS: SAMTOOLS'
     numImputs           : 2
     outputPath          : ./results/SAMTOOLS/mpileup/
     publication         :
@@ -28,7 +28,7 @@ Inputs:
     OneConnectorOnlyFor : 3
     SolelyConnectors    : 3
     command2Call        : --positions
-    extention           :
+    extension           : .bed
 
   - type                : FastaFile
     connector           : 3
@@ -36,7 +36,7 @@ Inputs:
     OneConnectorOnlyFor : 3
     SolelyConnectors    : 3
     command2Call        : --fasta-ref
-    extention           :
+    extension           : .fa
 
   - type                : SamFile
     connector           : 2
@@ -44,7 +44,7 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    : 2
     command2Call        :
-    extention           :
+    extension           : .sam
 
   - type                : BamFile
     connector           : 2
@@ -52,7 +52,7 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    : 2
     command2Call        :
-    extention           : .bam
+    extension           : .bam
 
   - type                : CramFile
     connector           : 2
@@ -60,12 +60,12 @@ Inputs:
     OneConnectorOnlyFor : 2
     SolelyConnectors    : 2
     command2Call        :
-    extention           : .cram
+    extension           : .cram
 Outputs:
   - type            : VCFFile
     connectorText   : Outfile
     command2Call    :
-    extention       : .vcf
+    extension       : .vcf
 Menus:
   - name    : Default Options
     isMenu  : true
