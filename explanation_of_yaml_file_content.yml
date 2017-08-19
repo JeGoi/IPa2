@@ -15,6 +15,7 @@ Program:  **
     website             : [string,'']       (link to application website)
     webServices         : [string,'']       (link to application webservices)
     outputFilesFromOutputPath: [string,'']  (
+    version             : [string,'']       (link to application version)
 Docker:
     imageName           : [string]                  ** (name of content in docker hub)
     cmd                 : [string]                  ** (command to be executed in docker container)
