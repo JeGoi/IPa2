@@ -29,7 +29,8 @@ def create_properties_file(yml,isTest):
                 "\nClassName= programs."+u.get_program_name(yml)+""+
                 "\nEditorClassName= editors."+u.get_program_name(yml)+"Editors"+
                 "\ndebug= false"+
-                "\nfilename= C\:\\armadillo2\\data\\properties\\"+u.get_program_name(yml)+".properties")
+                "\nfilename= C\:\\armadillo2\\data\\properties\\"+u.get_program_name(yml)+".properties"+
+                "\nVersion= "+u.get_program_version(yml)+"")
     
     for paths in yml['Program']['executablePaths']:
         out.write("\n"+paths+"="+yml['Program']['executablePaths'][paths])
