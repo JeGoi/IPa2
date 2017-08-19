@@ -89,6 +89,10 @@ def get_program_name(yml):
     o = replace_space_by_underscore(yml['Program']['name'])
     return o
 
+def get_program_version(yml):
+    o = replace_space_by_underscore(yml['Program']['version'])
+    return o
+
 def create_button_name(panel,title,name,btype):
     p = create_initials(panel)
     t = create_initials(title)
