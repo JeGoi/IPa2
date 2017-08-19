@@ -1,0 +1,489 @@
+Program:
+    name                : RepeatMasker
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : RepeatMasker
+      ExecutableMacOSX  : RepeatMasker
+      Executable        : RepeatMasker
+    menu                : 'NGS: RepeatMasker'
+    numImputs           : 2
+    outputPath          : ./results/RepeatMasker/
+    publication         : 
+    helpSupplementary   : 'Mask repetitive DNA SYNOPSIS: RepeatMasker [-options] <seqfiles(s) in fasta format> Default settings are for masking all type of repeats in a primatesequence'
+    desc                :
+    website             : http://www.repeatmasker.org/faq.html
+    webServices         :
+    outputFilesFromOutputPath:
+Inputs:
+  - type                : FastaFile
+    connector           : 2
+    connectorText       : Sequence
+    OneConnectorOnlyFor : 
+    SolelyConnectors    :
+    command2Call        : -estsequence
+    extension           : .fasta
+
+  - type                : EmblFile
+    connector           : 3
+    connectorText       : Library (embl)
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    :
+    command2Call        : -lib
+    extension           : .embl
+    help                : Allows use of a custom library (e.g. from another species)
+
+  - type                : FastaFile
+    connector           : 3
+    connectorText       : (fasta)
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    :
+    command2Call        : -lib
+    extension           : .embl
+    help                : Allows use of a custom library (e.g. from another species)
+
+Outputs:
+  - type            : CatFile
+    connectorText   : Outfile
+    command2Call    : 
+    extension       : .cat
+
+  - type            : TextFile
+    connectorText   : StdError
+    command2Call    : 
+    extension       : .stderr
+
+  - type            : TextFile
+    connectorText   : Out
+    command2Call    : 
+    extension       : .out
+
+  - type            : maskedFile
+    connectorText   : Maskedfile
+    command2Call    : 
+    extension       : .masked
+
+  - type            : tblFile
+    connectorText   : tblFile
+    command2Call    : 
+    extension       : .tbl
+
+  - type            : textFile
+    connectorText   : Cutfile
+    command2Call    : 
+    extension       : .cut
+
+  - type            : alignFile
+    connectorText   : alignfile
+    command2Call    : 
+    extension       : .align
+
+  - type            : alertFile
+    connectorText   : alertfile
+    command2Call    : 
+    extension       : .alert
+
+  - type            : alertFile
+    connectorText   : alertfile
+    command2Call    : 
+    extension       : .withoutIS
+
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+    
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    Panel:
+      - tab     : Options speed and search
+        Arguments:
+          - name        : -engine
+            shortName   : -e
+            cType       : box
+            values:
+                vType   : combo
+                vDefault: crossmatch
+                vValues :
+                        - crossmatch
+                        - wublast
+                        - bblast
+                        - ncbi
+                        - hmmer
+                        - decypher
+            tooltip     : Use an alternate search engine to the default.
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -parallel
+            shortName   : -pa
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 1
+                vMin    : 1
+                vMax    : 
+                vJump   : 1
+            tooltip     : The number of processors to use in parallel (only works for batchfiles or sequences over 50 kb). Default 1
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -s
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 0
+                vMin    : 0
+                vMax    : 1
+                vJump   : 1
+            tooltip     : 'Slow search: 0-5% more sensitive, 2-3 times slower than default'
+            label       :
+            oppositeTo  :
+                - q
+                - qq
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -q
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 0
+                vMin    : 0
+                vMax    : 1
+                vJump   : 1
+            tooltip     : 'Quick search: 5-10% less sensitive, 2-5 times faster than default'
+            label       :
+            oppositeTo  :
+                - s
+                - qq
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -qq
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 0
+                vMin    : 0
+                vMax    : 1
+                vJump   : 1
+            tooltip     : 'Rush job: about 10% less sensitive, 4->10 times faster than default(quick searches are fine under most circumstances) repeat options. Default 0 (no)'
+            label       :
+            oppositeTo  :
+                - s
+                - q
+            parentOf    :
+            selected    :
+            cHelp       :
+
+      - tab     : Species options
+        Arguments:
+          - name        : -lib
+            shortName   : 
+            cType       : box
+            values:
+            tooltip     : Allows use of a custom library from the workflow (e.g. from another species)
+            label       :
+            oppositeTo  :
+                - species
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -species
+            shortName   : -spec
+            cType       : box
+            values:
+                vType   : combo
+                vDefault: Vertebrate
+                vValues :
+                    - Vertebrate (other than below)
+                    - Mammal (other than below)
+                    - Human
+                    - Rodent
+                    - Mouse
+                    - Rat
+                    - Artiodactyls and whales
+                    - Cow
+                    - Pig
+                    - Carnivore
+                    - Cat
+                    - Dog
+                    - Chicken
+                    - Xenopus (African clawed frog)
+                    - Fugu (pufferfish)
+                    - Danio (zebra fish)
+                    - Ciona savigny
+                    - Ciona intestinalis
+                    - Fruit fly (Drosophila melanogaster)
+                    - Malaria mosquito (Anopheles gambiae)
+                    - Caenorhabditis elegans (nematode)
+                    - Diatom (Thalassiosira pseudonana)
+                    - Arabidopsis thaliana (thale cress)
+                    - Triticae (ryes, barleys, wheats)
+                    - Panicoid (maize, sugar cane, sorghum, millet)
+                    - Rice
+            tooltip     : 'Specify the species or clade of the input sequence. The species namemust be a valid NCBI Taxonomy Database species name and be contained in the RepeatMasker repeat database. Some examples are:  -species [human, mouse, rattus, ciona savignyi, arabidopsis, mammal, carnivore, rodentia, rat, cow, pig, cat, dog, chicken, fugu, danio, ciona intestinalis drosophila, anopheles, elegans, diatoaea, artiodactyl, arabidopsis, rice, wheat, and maize. Default human'
+            label       :
+            oppositeTo  :
+                - lib
+            parentOf    :
+            selected    :
+            cHelp       :
+
+      - tab     : Masking options
+        Arguments:
+          - name        : -cutoff
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 225
+                vMin    : 
+                vMax    : 
+                vJump   : 1
+            tooltip     : Sets cutoff score for masking repeats when using -lib (default 225)
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -nolow
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : Does not mask low_complexity DNA or simple repeats
+            label       :
+            oppositeTo  :
+                - low
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -low
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : Mask low_complexity DNA or simple repeats
+            label       :
+            oppositeTo  :
+                - nolow
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -noint
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : Only masks low complex/simple repeats (no interspersed repeats)
+            label       :
+            oppositeTo  :
+                - int
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -int
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : Only masks low complex/simple repeats (no interspersed repeats)
+            label       :
+            oppositeTo  :
+                - noint
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -norna
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : Does not mask small RNA (pseudo) genes
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -alu
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : Only masks Alus (and 7SLRNA, SVA and LTR5) ! only for primate DNA !
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -div
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 10
+                vMin    : 
+                vMax    : 
+                vJump   : 1
+            tooltip     : Masks only those repeats < x percent diverged from consensus seq
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+      - tab     : Contamination options
+        Arguments:
+          - name        : -is_only
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : Only clips E coli insertion elements out of fasta and .qual files
+            label       :
+            oppositeTo  :
+                - is_clip
+                - no_is
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -is_clip
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : 'Clips IS elements before analysis (default: IS only reported)'
+            label       :
+            oppositeTo  :
+                - is_only
+                - no_is
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -no_is
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : Skips bacterial insertion element check
+            label       :
+            oppositeTo  :
+                - is_clip
+                - is_only
+            parentOf    :
+            selected    :
+            cHelp       :
+
+      - tab     : Running options
+        Arguments:
+          - name        : -gc
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 10
+                vMin    : 0
+                vMax    : 100
+                vJump   : 1
+            tooltip     : Use matrices calculated for XX percentage background GC level
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -gccalc
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : RepeatMasker calculates the GC content even for batch files/smallseqs
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -frag
+            shortName   :
+            cType       : box
+            values:
+                vType   : int
+                vDefault: 60000
+                vMin    : 0
+                vMax    : 
+                vJump   : 10000
+            tooltip     : Maximum sequence length masked without fragmenting (default 60000,300000 for DeCypher)
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -nocut
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : Skips the steps in which repeats are excised
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -noisy
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : Prints search engine progress report to screen (defaults to .stderrfile)
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -nopost
+            shortName   :
+            cType       : box
+            values:
+            tooltip     : 'Do not postprocess the results of the run ( i.e. call ProcessRepeats). NOTE: This options should only be used when ProcessRepeats willbe run manually on the results.'
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+AfterProcess:
+    - modifications:
+        - None
+
+#"T";"output options"
+#"C";"-dir";"";"bo";"text";"[directory name]";""Writes output to this directory (default is query file directory,-dir . will write to current directory).";""
+#"C";"-alignments";"-a";"bo";"";"";"Writes alignments in .align output file";""
+#"C";"-inv";"";"bo";"";"";"Alignments are presented in the orientation of the repeat (withoption -a)";""
+#"C";"-lcambig";"";"bo";"";"";"Outputs ambiguous DNA transposon fragments using a lower case name.All other repeats are comboed in upper case. Ambiguous fragmentsmatch multiple repeat elements and can only be called based onflanking repeat information.";""
+#"C";"-small";"";"bo";"";"";"Returns complete .masked sequence in lower case";""
+#"C";"-xsmall";"";"bo";"";"";"Returns repetitive regions in lowercase (rest capitals) rather thanmasked";""
+#"C";"-x";"";"bo";"";"";"Returns repetitive regions masked with Xs rather than Ns";""
+#"C";"-poly";"";"bo";"";"";"Reports simple repeats that may be polymorphic (in file.poly)";""
+#"C";"-html";"";"bo";"";"";"Creates an additional output file in xhtml format.";""
+#"C";"-source";"";"bo";"text";"is link to html";"Includes for each annotation the HSP evidence. Currently this option is only available with the -html output format comboedbelow.";""
+#"C";"-ace";"";"bo";"";"";"Creates an additional output file in ACeDB format";""
+#"C";"-gff";"";"bo";"";"";"Creates an additional Gene Feature Finding format output";""
+#"C";"-u";"";"bo";"";"";"Creates an additional annotation file not processed byProcessRepeats";""
+#"C";"-xm";"";"bo";"";"";"Creates an additional output file in cross_match format (forparsing)";""
+#"C";"-no_id";"";"bo";"";"";"Leaves out final column with unique ID for each element (wasdefault)";""
+#"C";"-excln";"-e";"bo";"";"";"Calculates repeat densities (in .tbl) excluding runs of >=20 N/Xs inthe query";""

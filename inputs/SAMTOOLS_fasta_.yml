@@ -1,0 +1,168 @@
+Program:
+    name                : samtools bedcov
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS’
+    numImputs           : 2
+    outputPath          : ./results/SAMTOOLS/bedcov/
+    publication         :
+    helpSupplementary   : 
+    desc                :
+    website             : 
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools bedcov
+    sharedFolder        : /data
+    dockerName          : 
+    rmks                : 
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : BedFile
+    connector           : 3
+    connectorText       : Bed
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    : 3
+    command2Call        : 
+    extention           : 
+
+  - type                : SamFile
+    connector           : 2
+    connectorText       : Sam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : 
+
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .bam
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .cram
+Outputs:
+  - type            : TextFile
+    connectorText   : Outfile
+    command2Call    :  
+    extention       : .txt
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -Q
+            shortName   : 
+            cType       : box
+            values:
+                vType   : Int
+                vDefault: 0
+                vMin    : 1
+                vMax    : 
+                vJump   : 1
+            tooltip     : Only count reads with mapping quality greater than value
+            label       :
+            oppositeTo  : 
+            parentOf    :
+            selected    :
+            cHelp       :
+
+
+samtools fastq [options] in.bam 
+samtools fasta [options] in.bam
+
+Converts a BAM or CRAM into either FASTQ or FASTA format depending on the command invoked. The FASTQ files will be automatically compressed if the filenames have a .gz or .bgzf extention.
+
+
+-n
+By default, either '/1' or '/2' is added to the end of read names where the corresponding BAM_READ1 or BAM_READ2 flag is set. Using -n causes read names to be left as they are.
+
+-N
+Always add either '/1' or '/2' to the end of read names even when put into different files.
+
+-O
+Use quality values from OQ tags in preference to standard quality string if available.
+
+-s FILE
+Write singleton reads in FASTQ format to FILE instead of outputting them.
+
+-t
+Copy RG, BC and QT tags to the FASTQ header line, if they exist.
+
+-T TAGLIST
+Specify a comma-separated list of tags to copy to the FASTQ header line, if they exist.
+
+-1 FILE
+Write reads with the BAM_READ1 flag set to FILE instead of outputting them.
+
+-2 FILE
+Write reads with the BAM_READ2 flag set to FILE instead of outputting them.
+
+-0 FILE
+Write reads with both or neither of the BAM_READ1 and BAM_READ2 flags set to FILE instead of outputting them.
+
+-f INT
+Only output alignments with all bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
+
+-F INT
+Do not output alignments with any bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
+
+-G INT
+Only EXCLUDE reads with all of the bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
+
+-i
+add Illumina Casava 1.8 format entry to header (eg 1:N:0:ATCACG)
+
+-c [0..9]
+set compression level when writing gz or bgzf fastq files.
+
+--i1 FILE
+write first index reads to FILE
+
+--i2 FILE
+write second index reads to FILE
+
+--barcode-tag TAG
+aux tag to find index reads in [default: BC]
+
+--quality-tag TAG
+aux tag to find index quality in [default: QT]
+
+--index-format STR
+string to describe how to parse the barcode and quality tags. For example:
+
+i14i8
+the first 14 characters are index 1, the next 8 characters are index 2
+
+n8i14
+ignore the first 8 characters, and use the next 14 characters for index 1
+
+If the tag contains a separator, then the numeric part can be replaced with '*' to mean 'read until the separator or end of tag', for example:
+
+n*i*
+ignore the left part of the tag until the separator, then use the second part
+
+
+
+AfterProcess:
+    - modifications:
+        - None

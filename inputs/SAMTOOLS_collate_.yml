@@ -1,0 +1,112 @@
+Program:
+    name                : samtools bedcov
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS’
+    numImputs           : 2
+    outputPath          : ./results/SAMTOOLS/bedcov/
+    publication         :
+    helpSupplementary   : 
+    desc                :
+    website             : 
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools bedcov
+    sharedFolder        : /data
+    dockerName          : 
+    rmks                : 
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : BedFile
+    connector           : 3
+    connectorText       : Bed
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    : 3
+    command2Call        : 
+    extention           : 
+
+  - type                : SamFile
+    connector           : 2
+    connectorText       : Sam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : 
+
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .bam
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .cram
+Outputs:
+  - type            : TextFile
+    connectorText   : Outfile
+    command2Call    :  
+    extention       : .txt
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -Q
+            shortName   : 
+            cType       : box
+            values:
+                vType   : Int
+                vDefault: 0
+                vMin    : 1
+                vMax    : 
+                vJump   : 1
+            tooltip     : Only count reads with mapping quality greater than value
+            label       :
+            oppositeTo  : 
+            parentOf    :
+            selected    :
+            cHelp       :
+
+
+
+samtools collate [options] in.sam|in.bam|in.cram [out.prefix]
+
+Shuffles and groups reads together by their names. A faster alternative to a full query name sort, collate ensures that reads of the same name are grouped together in contiguous groups, but doesn't make any guarantees about the order of read names between groups.
+
+The output from this command should be suitable for any operation that requires all reads from the same template to be grouped together.
+
+
+-O
+Output to stdout rather than to files starting with out.prefix
+
+-u
+Write uncompressed BAM output
+
+-l INT
+Compression level. [1]
+
+-n INT
+Number of temporary files to use. [64]
+
+AfterProcess:
+    - modifications:
+        - None

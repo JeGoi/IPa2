@@ -1,0 +1,108 @@
+Program:
+    name                : samtools bedcov
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS’
+    numImputs           : 2
+    outputPath          : ./results/SAMTOOLS/bedcov/
+    publication         :
+    helpSupplementary   : 
+    desc                :
+    website             : 
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools bedcov
+    sharedFolder        : /data
+    dockerName          : 
+    rmks                : 
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : BedFile
+    connector           : 3
+    connectorText       : Bed
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    : 3
+    command2Call        : 
+    extention           : 
+
+  - type                : SamFile
+    connector           : 2
+    connectorText       : Sam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : 
+
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .bam
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .cram
+Outputs:
+  - type            : TextFile
+    connectorText   : Outfile
+    command2Call    :  
+    extention       : .txt
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -Q
+            shortName   : 
+            cType       : box
+            values:
+                vType   : Int
+                vDefault: 0
+                vMin    : 1
+                vMax    : 
+                vJump   : 1
+            tooltip     : Only count reads with mapping quality greater than value
+            label       :
+            oppositeTo  : 
+            parentOf    :
+            selected    :
+            cHelp       :
+
+
+samtools tview [-p chr:pos] [-s STR] [-d display] <in.sorted.bam> [ref.fasta]
+
+Text alignment viewer (based on the ncurses library). In the viewer, press `?' for help and press `g' to check the alignment start from a region in the format like `chr10:10,000,000' or `=10,000,000' when viewing the same reference sequence.
+
+-d display
+Output as (H)tml or (C)urses or (T)ext
+
+-p chr:pos
+Go directly to this position
+
+-s STR
+Display only alignments from this sample or read group
+
+
+
+
+AfterProcess:
+    - modifications:
+        - None

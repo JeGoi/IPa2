@@ -1,0 +1,141 @@
+Program:
+    name                : samtools sort
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS’
+    numImputs           : 1
+    outputPath          : ./results/SAMTOOLS/sort/
+    publication         :
+    helpSupplementary   : Sort alignments by leftmost coordinates, or by read name when -n is used. An appropriate @HD-SO sort order header tag will be added or an existing one updated if necessary.
+    desc                :
+    website             :
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools sort
+    sharedFolder        : /data
+    dockerName          :
+    rmks                :
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : SamFile
+    connector           : 2
+    connectorText       : Sam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        :
+    extention           :
+
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        :
+    extention           :
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram File
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        :
+    extention           :
+Outputs:
+  - type            : BamFile
+    connectorText   : Outfile
+    command2Call    : >
+    extention       : .bam
+  - type            : CramFile
+    connectorText   : Outfile
+    command2Call    : >
+    extention       : .cram
+  - type            : SamFile
+    connectorText   : Outfile
+    command2Call    : >
+    extention       : .sam
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -T
+            shortName   :
+            cType       : box
+            values:
+                vType   : Text
+                vDefault: PREFIX
+            tooltip     : Write temporary files to PREFIX.nnnn.bam, or if the specified PREFIX is an existing directory, to PREFIX/samtools.mmm.mmm.tmp.nnnn.bam, where mmm is unique to this invocation of the sort command. By default, any temporary files are written alongside the output file, as out.bam.tmp.nnnn.bam, or if output is to standard output, in the current directory as samtools.mmm.mmm.tmp.nnnn.bam.
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -H
+            shortName   :
+            cType       : box
+            values:
+                vType   :
+                vDefault:
+                vMin    :
+                vMax    :
+                vJump   :
+            tooltip     : Output the header only.
+            label       :
+            oppositeTo  : -h
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -O
+            shortName   :
+            cType       : box
+            values:
+                vType   : combo
+                vDefault: bam
+                vValues :
+                    - bam
+                    - sam
+                    - cram
+            tooltip     : Write the final output as sam, bam, or cram. By default, samtools tries to select a format based on the -o filename extension; if output is to standard output or no format can be deduced, bam is selected.
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+#-l INT
+#Set the desired compression level for the final output file, ranging from 0 (uncompressed) or 1 (fastest but minimal compression) to 9 (best compression but slowest to write), similarly to gzip(1)'s compression level setting.
+#
+#If -l is not used, the default compression level will apply.
+#
+#-m INT
+#Approximately the maximum required memory per thread, specified either in bytes or with a K, M, or G suffix. [768 MiB]
+#
+#To prevent sort from creating a huge number of temporary files, it enforces a minimum value of 1M for this setting.
+#
+#-n
+#Sort by read names (i.e., the QNAME field) rather than by chromosomal coordinates.
+#
+#-t TAG
+#Sort first by the value in the alignment tag TAG, then by position or name (if also using -n). -o FILE Write the final sorted output to FILE, rather than to standard output.
+#
+#-@ INT
+#Set number of sorting and compression threads. By default, operation is single-threaded.
+#
+#
+AfterProcess:
+    - modifications:
+        - None

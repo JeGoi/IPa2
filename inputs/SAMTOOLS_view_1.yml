@@ -1,0 +1,152 @@
+Program:
+    name                : samtools view
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS’
+    numImputs           : 1
+    outputPath          : ./results/SAMTOOLS/view/
+    publication         :
+    helpSupplementary   : With no options or regions specified, prints all alignments in the specified input alignment file (in SAM, BAM, or CRAM format) to standard output in SAM format (with no header).
+    desc                :
+    website             :
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools view
+    sharedFolder        : /data
+    dockerName          :
+    rmks                :
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : SamFile
+    connector           : 2
+    connectorText       : Sam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        :
+    extention           :
+
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        :
+    extention           :
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram File
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        :
+    extention           :
+Outputs:
+  - type            : SamFile
+    connectorText   : Outfile
+    command2Call    : >
+    extention       : .sam
+  - type            : BamFile
+    connectorText   : Outfile
+    command2Call    : >
+    extention       : .bam
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -h
+            shortName   :
+            cType       : box
+            values:
+                vType   :
+                vDefault:
+                vMin    :
+                vMax    :
+                vJump   :
+            tooltip     : Include the header in the output.
+            label       :
+            oppositeTo  : -H
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -H
+            shortName   :
+            cType       : box
+            values:
+                vType   :
+                vDefault:
+                vMin    :
+                vMax    :
+                vJump   :
+            tooltip     : Output the header only.
+            label       :
+            oppositeTo  : -h
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : '-1'
+            shortName   :
+            cType       : box
+            values:
+                vType   :
+                vDefault:
+                vMin    :
+                vMax    :
+                vJump   :
+            tooltip     : Enable fast BAM compression (implies -b).
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -b
+            shortName   :
+            cType       : box
+            values:
+                vType   :
+                vDefault:
+                vMin    :
+                vMax    :
+                vJump   :
+            tooltip     :
+            label       : Output in the BAM format.
+            oppositeTo  :
+            parentOf    :
+                - '-1'
+            selected    :
+            cHelp       :
+
+          - name        : -S
+            shortName   :
+            cType       : box
+            values:
+                vType   :
+                vDefault:
+                vMin    :
+                vMax    :
+                vJump   :
+            tooltip     : Ignored for compatibility with previous samtools versions. Previously this option was required if input was in SAM format, but now the correct format is automatically detected by examining the first few characters of input.
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+
+AfterProcess:
+    - modifications:
+        - None

@@ -1,0 +1,113 @@
+Program:
+    name                : samtools bedcov
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS’
+    numImputs           : 2
+    outputPath          : ./results/SAMTOOLS/bedcov/
+    publication         :
+    helpSupplementary   : 
+    desc                :
+    website             : 
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools bedcov
+    sharedFolder        : /data
+    dockerName          : 
+    rmks                : 
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : BedFile
+    connector           : 3
+    connectorText       : Bed
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    : 3
+    command2Call        : 
+    extention           : 
+
+  - type                : SamFile
+    connector           : 2
+    connectorText       : Sam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : 
+
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .bam
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .cram
+Outputs:
+  - type            : TextFile
+    connectorText   : Outfile
+    command2Call    :  
+    extention       : .txt
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -Q
+            shortName   : 
+            cType       : box
+            values:
+                vType   : Int
+                vDefault: 0
+                vMin    : 1
+                vMax    : 
+                vJump   : 1
+            tooltip     : Only count reads with mapping quality greater than value
+            label       :
+            oppositeTo  : 
+            parentOf    :
+            selected    :
+            cHelp       :
+
+
+
+
+samtools addreplacerg [-r rg line | -R rg ID] [-m mode] [-l level] [-o out.bam] <input.bam>
+
+Adds or replaces read group tags in a file.
+
+-r STRING
+Allows you to specify a read group line to append to the header and applies it to the reads specified by the -m option. If repeated it automatically adds in tabs between invocations.
+
+-R STRING
+Allows you to specify the read group ID of an existing @RG line and applies it to the reads specified.
+
+-m MODE
+If you choose orphan_only then existing RG tags are not overwritten, if you choose overwrite_all, existing RG tags are overwritten. The default is overwrite_all.
+
+-o STRING
+Write the final output to STRING. The default is to write to stdout.
+
+By default, samtools tries to select a format based on the output filename extension; if output is to standard output or no format can be deduced, bam is selected.
+
+
+AfterProcess:
+    - modifications:
+        - None

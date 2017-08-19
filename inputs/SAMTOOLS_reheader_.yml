@@ -1,0 +1,109 @@
+Program:
+    name                : samtools bedcov
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS’
+    numImputs           : 2
+    outputPath          : ./results/SAMTOOLS/bedcov/
+    publication         :
+    helpSupplementary   : 
+    desc                :
+    website             : 
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools bedcov
+    sharedFolder        : /data
+    dockerName          : 
+    rmks                : 
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : BedFile
+    connector           : 3
+    connectorText       : Bed
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    : 3
+    command2Call        : 
+    extention           : 
+
+  - type                : SamFile
+    connector           : 2
+    connectorText       : Sam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : 
+
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .bam
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .cram
+Outputs:
+  - type            : TextFile
+    connectorText   : Outfile
+    command2Call    :  
+    extention       : .txt
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -Q
+            shortName   : 
+            cType       : box
+            values:
+                vType   : Int
+                vDefault: 0
+                vMin    : 1
+                vMax    : 
+                vJump   : 1
+            tooltip     : Only count reads with mapping quality greater than value
+            label       :
+            oppositeTo  : 
+            parentOf    :
+            selected    :
+            cHelp       :
+
+
+
+
+samtools reheader [-iP] in.header.sam in.bam
+
+Replace the header in in.bam with the header in in.header.sam. This command is much faster than replacing the header with a BAM→SAM→BAM conversion.
+
+By default this command outputs the BAM or CRAM file to standard output (stdout), but for CRAM format files it has the option to perform an in-place edit, both reading and writing to the same file. No validity checking is performed on the header, nor that it is suitable to use with the sequence data itself.
+
+
+-P, --no-PG
+Do not generate an @PG header line.
+
+-i, --in-place
+Perform the header edit in-place, if possible. This only works on CRAM files and only if there is sufficient room to store the new header. The amount of space available will differ for each CRAM file.
+
+
+
+AfterProcess:
+    - modifications:
+        - None

@@ -1,0 +1,201 @@
+Program:
+    name                : bfctools call
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: BFCTOOLS’
+    numImputs           : 2
+    outputPath          : ./results/BFCTOOLS/call/
+    publication         :
+    helpSupplementary   :
+    desc                :
+    website             :
+    webServices         :
+    outputFilesFromOutputPath:
+    version             : '1.5'
+Docker:
+    imageName           : jego/bfctools
+    cmd                 : bfctools call
+    sharedFolder        : /data
+    dockerName          :
+    rmks                :
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : BedFile
+    connector           : 3
+    connectorText       : Bed
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    : 3
+    command2Call        :
+    extention           :
+
+  - type                : SamFile
+    connector           : 2
+    connectorText       : Sam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        :
+    extention           :
+
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        :
+    extention           : .bam
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        :
+    extention           : .cram
+Outputs:
+  - type            : TextFile
+    connectorText   : Outfile
+    command2Call    :
+    extention       : .txt
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Input Output options
+        Arguments:
+          - name        : --variants-only
+            shortName   : -v
+            cType       : box
+            values:
+                vType   :
+                vDefault:
+                vMin    :
+                vMax    :
+                vJump   :
+            tooltip     : output variant sites only
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+      - tab     : Consensus Variant calling options
+        Arguments:
+          - name        : --multiallelic-caller
+            shortName   : -m
+            cType       : box
+            values:
+                vType   :
+                vDefault:
+                vMin    :
+                vMax    :
+                vJump   :
+            tooltip     : alternative modelfor multiallelic and rare-variant calling designed to overcome known limitations in -c calling model (conflicts with -c)
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+AfterProcess:
+    - modifications:
+        - None
+
+
+#bcftools call [OPTIONS] FILE
+#This command replaces the former bcftools view caller. Some of the original functionality has been temporarily lost in the process of transition under htslib, but will be added back on popular demand. The original calling model can be invoked with the -c option.
+#
+#File format options:
+#--no-version
+#see Common Options
+#-o, --output FILE
+#see Common Options
+#-O, --output-type b|u|z|v
+#see Common Options
+#--ploidy ASSEMBLY[?]
+#predefined ploidy, use list (or any other unused word) to print a list of all predefined assemblies. Append a question mark to print the actual definition. See also --ploidy-file.
+#--ploidy-file FILE
+#ploidy definition given as a space/tab-delimited list of CHROM, FROM, TO, SEX, PLOIDY. The SEX codes are arbitrary and correspond to the ones used by --samples-file. The default ploidy can be given using the starred records (see below), unlisted regions have ploidy 2. The default ploidy definition is
+#    X 1 60000 M 1
+#    X 2699521 154931043 M 1
+#    Y 1 59373566 M 1
+#    Y 1 59373566 F 0
+#    MT 1 16569 M 1
+#    MT 1 16569 F 1
+#    *  * *     M 2
+#    *  * *     F 2
+#-r, --regions chr|chr:pos|chr:from-to|chr:from-[,…]
+#see Common Options
+#-R, --regions-file file
+#see Common Options
+#-s, --samples LIST
+#see Common Options
+#-S, --samples-file FILE
+#see Common Options
+#-t, --targets LIST
+#see Common Options
+#-T, --targets-file FILE
+#see Common Options
+#--threads INT
+#see Common Options
+#Input/output options:
+#-A, --keep-alts
+#output all alternate alleles present in the alignments even if they do not appear in any of the genotypes
+#-f, --format-fields list
+#comma-separated list of FORMAT fields to output for each sample. Currently GQ and GP fields are supported. For convenience, the fields can be given as lower case letters.
+#-F, --prior-freqs AN,AC
+#take advantage of prior knowledge of population allele frequencies. The workflow looks like this:
+#    # Extract AN,AC values from an existing VCF, such 1000Genomes
+#    bcftools query -f'%CHROM\t%POS\t%REF\t%ALT\t%AN\t%AC\n' 1000Genomes.bcf | bgzip -c > AFs.tab.gz
+#
+#    # If the tags AN,AC are not already present, use the +fill-AN-AC plugin
+#    bcftools +fill-AN-AC 1000Genomes.bcf | bcftools query -f'%CHROM\t%POS\t%REF\t%ALT\t%AN\t%AC\n' | bgzip -c > AFs.tab.gz
+#    tabix -s1 -b2 -e2 AFs.tab.gz
+#
+#    # Create a VCF header description, here we name the tags REF_AN,REF_AC
+#    cat AFs.hdr
+#    ##INFO=<ID=REF_AN,Number=1,Type=Integer,Description="Total number of alleles in reference genotypes">
+#    ##INFO=<ID=REF_AC,Number=A,Type=Integer,Description="Allele count in reference genotypes for each ALT allele">
+#
+#    # Now before calling, stream the raw mpileup output through `bcftools annotate` to add the frequencies
+#    bcftools mpileup [...] -Ou | bcftools annotate -a AFs.tab.gz -h AFs.hdr -c CHROM,POS,REF,ALT,REF_AN,REF_AC -Ou | bcftools call -mv -F REF_AN,REF_AC [...]
+#-g, --gvcf INT
+#output also gVCF blocks of homozygous REF calls. The parameter INT is the minimum per-sample depth required to include a site in the non-variant block.
+#-i, --insert-missed INT
+#output also sites missed by mpileup but present in -T, --targets-file.
+#-M, --keep-masked-ref
+#output sites where REF allele is N
+#-V, --skip-variants snps|indels
+#skip indel/SNP sites
+##-v, --variants-only
+##output variant sites only
+#Consensus/variant calling options:
+#-c, --consensus-caller
+#the original samtools/bcftools calling method (conflicts with -m)
+#-C, --constrain alleles|trio
+#alleles
+#call genotypes given alleles. See also -T, --targets-file.
+#trio
+#call genotypes given the father-mother-child constraint. See also -s, --samples and -n, --novel-rate.
+##-m, --multiallelic-caller
+##alternative modelfor multiallelic and rare-variant calling designed to overcome known limitations in -c calling model (conflicts with -c)
+#-n, --novel-rate float[,…]
+#likelihood of novel mutation for constrained -C trio calling. The trio genotype calling maximizes likelihood of a particular combination of genotypes for father, mother and the child P(F=i,M=j,C=k) = P(unconstrained) * Pn + P(constrained) * (1-Pn). By providing three values, the mutation rate Pn is set explicitly for SNPs, deletions and insertions, respectively. If two values are given, the first is interpreted as the mutation rate of SNPs and the second is used to calculate the mutation rate of indels according to their length as Pn=float*exp(-a-b*len), where a=22.8689, b=0.2994 for insertions and a=21.9313, b=0.2856 for deletions [pubmed:23975140]. If only one value is given, the same mutation rate Pn is used for SNPs and indels.
+#-p, --pval-threshold float
+#with -c, accept variant if P(ref|D) < float.
+#-P, --prior float
+#expected substitution rate, or 0 to disable the prior. Only with -m.
+#-t, --targets file|chr|chr:pos|chr:from-to|chr:from-[,…]
+#see Common Options
+#-X, --chromosome-X
+#haploid output for male samples (requires PED file with -s)
+#-Y, --chromosome-Y
+#haploid output for males and skips females (requires PED file with -s)
+#
+

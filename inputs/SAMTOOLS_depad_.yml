@@ -1,0 +1,123 @@
+Program:
+    name                : samtools bedcov
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS’
+    numImputs           : 2
+    outputPath          : ./results/SAMTOOLS/bedcov/
+    publication         :
+    helpSupplementary   : 
+    desc                :
+    website             : 
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools bedcov
+    sharedFolder        : /data
+    dockerName          : 
+    rmks                : 
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : BedFile
+    connector           : 3
+    connectorText       : Bed
+    OneConnectorOnlyFor : 3
+    SolelyConnectors    : 3
+    command2Call        : 
+    extention           : 
+
+  - type                : SamFile
+    connector           : 2
+    connectorText       : Sam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : 
+
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .bam
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .cram
+Outputs:
+  - type            : TextFile
+    connectorText   : Outfile
+    command2Call    :  
+    extention       : .txt
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -Q
+            shortName   : 
+            cType       : box
+            values:
+                vType   : Int
+                vDefault: 0
+                vMin    : 1
+                vMax    : 
+                vJump   : 1
+            tooltip     : Only count reads with mapping quality greater than value
+            label       :
+            oppositeTo  : 
+            parentOf    :
+            selected    :
+            cHelp       :
+
+
+
+
+
+samtools depad [-SsCu1] [-T ref.fa] [-o output] <in.bam>
+
+Converts a BAM aligned against a padded reference to a BAM aligned against the depadded reference. The padded reference may contain verbatim "*" bases in it, but "*" bases are also counted in the reference numbering. This means that a sequence base-call aligned against a reference "*" is considered to be a cigar match ("M" or "X") operator (if the base-call is "A", "C", "G" or "T"). After depadding the reference "*" bases are deleted and such aligned sequence base-calls become insertions. Similarly transformations apply for deletions and padding cigar operations.
+
+OPTIONS:
+
+-S
+Ignored for compatibility with previous samtools versions. Previously this option was required if input was in SAM format, but now the correct format is automatically detected by examining the first few characters of input.
+
+-s
+Output in SAM format. The default is BAM.
+
+-C
+Output in CRAM format. The default is BAM.
+
+-u
+Do not compress the output. Applies to either BAM or CRAM output format.
+
+-1
+Enable fastest compression level. Only works for BAM or CRAM output.
+
+-T FILE
+Provides the padded reference file. Note that without this the @SQ line lengths will be incorrect, so for most use cases this option will be considered as mandatory.
+
+-o FILE
+Specifies the output filename. By default output is sent to stdout.
+
+
+AfterProcess:
+    - modifications:
+        - None

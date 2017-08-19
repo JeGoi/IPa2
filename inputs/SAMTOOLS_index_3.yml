@@ -1,0 +1,121 @@
+Program:
+    name                : samtools index
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS’
+    numImputs           : 1
+    outputPath          : ./results/SAMTOOLS/index/
+    publication         :
+    helpSupplementary   : Index a coordinate-sorted BAM or CRAM file for fast random access. (Note that this does not work with SAM files even if they are bgzip compressed — to index such files, use tabix(1) instead.)
+    desc                :
+    website             :
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools index
+    sharedFolder        : /data
+    dockerName          :
+    rmks                :
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        :
+    extention           : .bam
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    :
+    command2Call        :
+    extention           : .cram
+Outputs:
+  - type            : BamFile
+    connectorText   : Outfile
+    command2Call    :
+    extention       : .bam.bai
+  - type            : CramFile
+    connectorText   : Outfile
+    command2Call    :
+    extention       : .cram.crai
+  - type            : BamFile
+    connectorText   : Outfile
+    command2Call    :
+    extention       : .bam.csi
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+  - name    : Advanced Options
+    isMenu  : true
+    isTab   : false
+    help    : Advanced Options
+    Panel:
+      - tab     : Advanced Options 1
+        Arguments:
+          - name        : -b
+            shortName   :
+            cType       : box
+            values:
+                vType   :
+                vDefault:
+                vMin    :
+                vMax    :
+                vJump   :
+            tooltip     : Create a BAI index. This is currently the default when no format options are used.
+            label       :
+            oppositeTo  :
+                - c
+                - m
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -c
+            shortName   :
+            cType       : box
+            values:
+                vType   :
+                vDefault:
+                vMin    :
+                vMax    :
+                vJump   :
+            tooltip     : Create a CSI index. By default, the minimum interval size for the index is 2^14, which is the same as the fixed value used by the BAI format.
+            label       :
+            oppositeTo  :
+                - b
+                - m
+            parentOf    :
+            selected    :
+            cHelp       :
+
+          - name        : -m
+            shortName   :
+            cType       : box
+            values:
+                vType   :  Int
+                vDefault: 1
+                vMin    : 0
+                vMax    :
+                vJump   : 1
+            tooltip     : Create a CSI index, with a minimum interval size of 2^INT.
+            label       :
+            oppositeTo  :
+                - b
+                - c
+            parentOf    :
+            selected    :
+            cHelp       :
+
+AfterProcess:
+    - modifications:
+        - None

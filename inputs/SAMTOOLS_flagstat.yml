@@ -1,0 +1,88 @@
+Program:
+    name                : samtools flagstat
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS’
+    numImputs           : 1
+    outputPath          : ./results/SAMTOOLS/flagstat/
+    publication         :
+    helpSupplementary   : Index a coordinate-sorted BAM or CRAM file for fast random access. (Note that this does not work with SAM files even if they are bgzip compressed — to index such files, use tabix(1) instead.) samtools flagstat in.sam|in.bam|in.cram
+    desc                : |
+        Does a full pass through the input file to calculate and print statistics to stdout.
+        Provides counts for each of 13 categories based primarily on bit flags in the FLAG field. Each category in the output is broken down into QC pass and QC fail, which is presented as "#PASS + #FAIL" followed by a description of the category.
+        The first row of output gives the total number of reads that are QC pass and fail (according to flag bit 0x200). For example:
+        22 + 28 in total (QC-passed reads + QC-failed reads)
+        Which would indicate that there are a total of 150 reads in the input file, 122 of which are marked as QC pass and 28 of which are marked as "not passing quality controls"
+        Following this, additional categories are given for reads which are:
+        secondary               0x100 bit set
+        supplementary           0x800 bit set
+        duplicates              0x400 bit set
+        mapped                  0x4   bit not set
+        paired in sequencing    0x1 bit set
+        read1                   both 0x1 and 0x40 bits set
+        read2                   both 0x1 and 0x80 bits set
+        properly paired         both 0x1 and 0x2 bits set and 0x4 bit not set
+        with itself and mate mapped 0x1 bit set and neither 0x4 nor 0x8 bits set
+        singletons              both 0x1 and 0x8 bits set and bit 0x4 not set
+        And finally, two rows are given that additionally filter on the reference name (RNAME), mate reference name (MRNM), and mapping quality (MAPQ) fields:
+        with mate mapped to a different chr             0x1 bit set and neither 0x4 nor 0x8 bits set and MRNM not equal to RNAME
+        with mate mapped to a different chr (mapQ>=5)   0x1 bit set and neither 0x4 nor 0x8 bits set and MRNM not equal to RNAME and MAPQ >= 5
+    website             : 
+    webServices         :
+    outputFilesFromOutputPath:
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools flagstat
+    sharedFolder        : /data
+    dockerName          : 
+    rmks                : 
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : SamFile
+    connector           : 2
+    connectorText       : Sam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : 
+
+  - type                : BamFile
+    connector           : 2
+    connectorText       : Bam
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .bam
+
+  - type                : CramFile
+    connector           : 2
+    connectorText       : Cram
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 2
+    command2Call        : 
+    extention           : .cram
+Outputs:
+  - type            : BamFile
+    connectorText   : Outfile
+    command2Call    : -o 
+    extention       : .bam
+  - type            : CramFile
+    connectorText   : Outfile
+    command2Call    : -o 
+    extention       : .am
+  - type            : SamFile
+    connectorText   : Outfile
+    command2Call    : -o 
+    extention       : .bam
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+
+AfterProcess:
+    - modifications:
+        - None
