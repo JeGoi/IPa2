@@ -207,7 +207,7 @@ def write_pgrm_box_and_button(out,yml):
                         cName   = Arguments['name']
                         cType   = Arguments['cType']
                         cText   = u.remove_hyphen(cName)
-                        cHelp   = Arguments['tooltip']
+                        cHelp   = str(Arguments['tooltip'])
 
                         c       = u.create_button_name(pName,tName,cName,cType)
                         v       = ""
@@ -281,7 +281,7 @@ def write_box_and_button(out,cName,cText,cType,cHelp):
               "        "+cName+".setName(\""+cName+"\"); // NOI18N\n")
     if isLabel:
         out.write("        "+cName+".setFont(new java.awt.Font(\"Ubuntu\", 3, 15)); // NOI18N\n")
-    if cHelp != "":
+    if cHelp != "" or cHelp is not "None":
         out.write("        "+cName+".getAccessibleContext().setAccessibleDescription(\""+cHelp+"\");\n")
     if not isLabel:
         isText = u.is_a_text(cType)
