@@ -141,4 +141,4 @@ Menus:
 #
 AfterProcess:
     - modifications:
-        - None
+        - Move the reset button, just a little to fix every boxes

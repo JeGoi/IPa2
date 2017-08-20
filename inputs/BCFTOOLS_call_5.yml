@@ -105,8 +105,7 @@ Menus:
             cHelp       :
 AfterProcess:
     - modifications:
-        - None
-
+        - Move the reset button, just a little to fix every boxes
 
 #bcftools call [OPTIONS] FILE
 #This command replaces the former bcftools view caller. Some of the original functionality has been temporarily lost in the process of transition under htslib, but will be added back on popular demand. The original calling model can be invoked with the -c option.
