@@ -125,9 +125,9 @@ def create_properties_file(yml,armaDir):
                     if c == "":
                         c = str(op['connectorText'])
                     else:
-                        t = str(op['connectorText'])
-                        if t not in c:
-                            c = c+", "+t
+                        s = str(op['connectorText'])
+                        if s not in c:
+                            c = c+", "+s
         if c != "":
             out.write("\nConnector"+t+"= "+c)
 
