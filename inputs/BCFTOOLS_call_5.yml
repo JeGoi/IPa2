@@ -6,7 +6,7 @@ Program:
       ExecutableMacOSX  : docker
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
     menu                : 'NGS: BFCTOOLS'
-    numImputs           : 2
+    numImputs           : 1
     outputPath          : ./results/BFCTOOLS/call/
     publication         :
     helpSupplementary   :
@@ -23,42 +23,34 @@ Docker:
     rmks                :
     copyDockerFilesDir2SharedFolder:
 Inputs:
-  - type                : BedFile
-    connector           : 3
-    connectorText       : Bed
-    OneConnectorOnlyFor : 3
-    SolelyConnectors    : 3
-    command2Call        :
-    extension           : .bed
-
-  - type                : SamFile
+  - type                : VCFFile
     connector           : 2
-    connectorText       : Sam
+    connectorText       : VCF
     OneConnectorOnlyFor : 2
     SolelyConnectors    : 2
     command2Call        :
-    extension           : .sam
-
-  - type                : BamFile
+    extension           : .vcf
+    
+  - type                : BCFFile
     connector           : 2
-    connectorText       : Bam
+    connectorText       : BCF
     OneConnectorOnlyFor : 2
     SolelyConnectors    : 2
     command2Call        :
-    extension           : .bam
-
-  - type                : CramFile
-    connector           : 2
-    connectorText       : Cram
-    OneConnectorOnlyFor : 2
-    SolelyConnectors    : 2
-    command2Call        :
-    extension           : .cram
+    extension           : .bcf
 Outputs:
   - type            : TextFile
     connectorText   : Outfile
     command2Call    :
     extension       : .txt
+  - type            : VCFFile
+    connectorText   : VCF
+    command2Call    :
+    extension       : .vcf
+  - type            : BCFFile
+    connectorText   : BCF
+    command2Call    :
+    extension       : .bcf
 Menus:
   - name    : Default Options
     isMenu  : true

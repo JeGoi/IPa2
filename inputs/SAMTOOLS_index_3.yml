@@ -39,15 +39,15 @@ Inputs:
     command2Call        :
     extension           : .cram
 Outputs:
-  - type            : BamFile
+  - type            : BamBaiFile
     connectorText   : Outfile
     command2Call    :
     extension       : .bam.bai
-  - type            : CramFile
+  - type            : CramCraiFile
     connectorText   : Outfile
     command2Call    :
     extension       : .cram.crai
-  - type            : BamFile
+  - type            : BamCsiFile
     connectorText   : Outfile
     command2Call    :
     extension       : .bam.csi
