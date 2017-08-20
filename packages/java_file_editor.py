@@ -714,7 +714,6 @@ def  write_event_commands(out,yml):
                             v       = u.create_value_name(pName,tName,cName,vType)
 
                             write_event_command_value(out,c,cType,v,vType)
-
                         write_event_command(out,c,cType,v,vType,childrens,opposites)
 
 
@@ -722,12 +721,11 @@ def write_event_command(out,c,cType,v,vType,childrens,opposites):
 
     out.write(  "    private void "+c+"_ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_"+c+"_ActionPerformed\n"+
                 "        // TODO add your handling code here:\n")
-    if childrens != None :
-        write_event_command_is_a_parent(out,c,childrens)
     if opposites != None :
         write_event_command_is_opposite_to(out,opposites)
-
-    vType = u.get_value_java_type(vType)
+    
+    if vType != '':
+        vType = u.get_value_java_type(vType)
     isCheckBox = u.is_a_box(cType)
     isButton   = u.is_a_button(cType)
 
@@ -747,6 +745,10 @@ def write_event_command(out,c,cType,v,vType,childrens,opposites):
             out.write("        Util.buttonEventSpinner(properties,"+c+","+v+");\n")
         if 'TextField' in vType:
             out.write("        Util.buttonEventText(properties,"+c+","+v+");\n")
+
+    if childrens != None :
+        write_event_command_is_a_parent(out,c,childrens)
+
 
     out.write("    }//GEN-LAST:event_"+c+"_ActionPerformed\n")
 
