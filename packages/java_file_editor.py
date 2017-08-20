@@ -754,14 +754,14 @@ def write_event_command_is_a_parent(out,c,childrens):
     out.write(  "        if (properties.isSet("+c+".getName())) {\n")
     for child in childrens:
         out.write("            "+child[0]+".setEnabled(true);\n")
-        if child[1] != None:
+        if child[1] != None and child[1] != '':
             out.write(  "            if (!properties.isSet("+child[0]+".getName())) {\n"+
                         "                "+child[1]+".setEnabled(false);\n"+
                         "              }\n")
     out.write(  "        } else {\n")
     for child in childrens:
         out.write("            "+child[0]+".setEnabled(false);\n")
-        if child[1] != None:
+        if child[1] != None and child[1] != '':
             out.write(  "                "+child[1]+".setEnabled(false);\n")
     out.write(  "        }\n"+
                 "\n")
