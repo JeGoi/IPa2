@@ -105,7 +105,7 @@ def create_properties_file(yml,armaDir):
                         s = s+","+t
         # Inputs options
         if o != "" or s != "":
-            out.write("\n#INPUTS INPUTS OPTIONS")
+            out.write("\n#INPUTS OPTIONS")
         if o != "":
             out.write("\nOneConnectorOnlyFor="+o)
         if s != "":
