@@ -634,7 +634,8 @@ def write_events(out,yml):
                 "        // TODO add your handling code here:\n"+
                 "        properties.load();             //--reload current properties from file\n"+
                 "        this.setProperties(properties);//--Update current field\n"+
-                "        this.display(properties);\n"+
+                "        //this.display(properties);\n"+
+                "        this.setVisible(false);\n"+
                 "    }//GEN-LAST:event_reset_jButton_ActionPerformed\n"+
                 "\n"+
                 "    private void name_jTextField_ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_name_jTextField_ActionPerformed\n"+
@@ -749,7 +750,6 @@ def write_event_command(out,c,cType,v,vType,childrens,opposites):
     if childrens != None :
         write_event_command_is_a_parent(out,c,childrens)
 
-
     out.write("    }//GEN-LAST:event_"+c+"_ActionPerformed\n")
 
 def write_event_command_is_a_parent(out,c,childrens):
@@ -759,12 +759,14 @@ def write_event_command_is_a_parent(out,c,childrens):
         if child[1] != None and child[1] != '':
             out.write(  "            if (!properties.isSet("+child[0]+".getName())) {\n"+
                         "                "+child[1]+".setEnabled(false);\n"+
-                        "              }\n")
+                        "            }\n")
     out.write(  "        } else {\n")
     for child in childrens:
-        out.write("            "+child[0]+".setEnabled(false);\n")
+        out.write("            "+child[0]+".setEnabled(false);\n"+
+                  "            "+child[0]+".setSelected(false);\n"+
+                  "            properties.remove("+child[0]+".getName());\n");
         if child[1] != None and child[1] != '':
-            out.write(  "                "+child[1]+".setEnabled(false);\n")
+            out.write(  "            "+child[1]+".setEnabled(false);\n")
     out.write(  "        }\n"+
                 "\n")
 
@@ -883,6 +885,7 @@ def write_functions(out,yml):
     write_set_properties(out,yml)
     write_default_program_values(out,yml)
     write_menu_fields(out,yml)
+    write_usp_parent_children(out,yml)
     write_save_image(out,yml)
 
 def write_objects_list_dictionaries(out,yml):
@@ -891,11 +894,11 @@ def write_objects_list_dictionaries(out,yml):
                 "     ******************************************************************/\n"+
                 "\n"+
                 "    /**\n"+
-                "     * Perpare List of Dictionaries\n"+
+                "     * Perpare List of Dictionaries by a general reset\n"+
                 "     * @param properties\n"+
                 "     */\n"+
                 "\n"+
-                "    public void perpareListDictionaries(workflow_properties properties){\n")
+                "    public void resetDictionaries(workflow_properties properties){\n")
     p = 0
     for Panel in yml['Menus']:
         if 'Panel' in Panel:
@@ -1013,7 +1016,7 @@ def write_set_properties(out,yml):
               "        //if (this.properties.isSet(\"Description\")) this.Notice.setText(properties.get(\"Description\"));\n"+
               "        \n"+
               "        // Prepare dictionaries\n"+
-              "        this.perpareListDictionaries(properties);\n"+
+              "        this.resetDictionaries(properties);\n"+
               "        this.perpareDictionaries(properties);\n"+
               "        // Properties Default Options\n"+
               "        this.defaultPgrmValues(properties);\n"+
@@ -1027,6 +1030,7 @@ def write_set_properties(out,yml):
                 out.write("        Util.updateSavedProperties(properties,listDicts"+str(p)+",name_jTextField);\n"+
                           "        properties.put(\""+u.name_without_space(Panel['name'])+"\",true);\n")
             p += 1
+            
     out.write("        // Set the menu\n"+
               "        this.menuFields(properties);\n"+
               "    }\n"+
@@ -1115,9 +1119,56 @@ def write_menu_fields(out,yml):
 
     for notMenu in allNotMenu:
         out.write("        Util.enabled_Advanced_Options(properties,true,listDicts"+notMenu[1]+");\n")
+        
+    out.write("        // update parents and children relation\n"+
+              "        parentsChildrenUpdate(properties);\n"+
+              "    }\n"+
+              "\n")
 
+
+def  write_usp_parent_children(out,yml):
+    out.write("    /*******************************************************************\n"+
+              "     * Update parents children relation\n"+
+              "     ******************************************************************/\n"+
+              "\n"+
+              "    private void parentsChildrenUpdate(workflow_properties properties){\n")
+    for Panel in yml['Menus']:
+        pName   =  Panel['name']
+        if 'Panel' in Panel:
+            for Tab in Panel['Panel']:
+                tName   =  Tab['tab']
+                if 'Arguments' in Tab:
+                    for Arguments in Tab['Arguments']:
+                        cName     = Arguments['name']
+                        cType     = Arguments['cType']
+                        childrens = Arguments['parentOf']
+
+                        c       = u.create_button_name(pName,tName,cName,cType)
+                        if childrens is not None:
+                            write_usp_parent_children_update(out,c,childrens)
     out.write("    }\n"+
               "\n")
+
+def write_usp_parent_children_update(out,c,childrens):
+    out.write(  "    \n"+
+                "        if (properties.isSet("+c+".getName())) {\n")
+    for child in childrens:
+        out.write("            "+child[0]+".setEnabled(true);\n")
+        if child[1] != None and child[1] != '':
+            out.write(  "            if (!properties.isSet("+child[0]+".getName())) {\n"+
+                        "                "+child[1]+".setEnabled(false);\n"+
+                        "            }\n")
+    out.write(  "        } else {\n")
+    for child in childrens:
+        out.write("            "+child[0]+".setEnabled(false);\n"+
+                  "            "+child[0]+".setSelected(false);\n"+
+                  "            properties.remove("+child[0]+".getName());\n");
+        if child[1] != None and child[1] != '':
+            out.write(  "            "+child[1]+".setEnabled(false);\n")
+    out.write(  "        }\n"+
+                "\n")
+
+
 
 def write_save_image(out,yml):
     out.write("\n    /*******************************************************************\n"+
