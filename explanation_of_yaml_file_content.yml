@@ -19,10 +19,13 @@ Program:  **
 Docker:
     imageName           : [string]                  ** (name of content in docker hub)
     cmd                 : [string]                  ** (command to be executed in docker container)
-    sharedFolder        : [string]                  ** (link to the shared forlder in container)
-    dockerName          : [string,'']               (if you want a specific name for the container)
+    sharedFolders       :                           By default there is two shared folder one for inputs one for outputs. Here it's if you vant to need more.
+                                                    They will be added when the container will be initiate.
+                                                    It could also be a java variable value, but the directory must be setted in the docker file before.
+                                                    If  inputs path are different it will automatically create and use sharedfolders
+        - [string path local]<>[String path docker] (link to the shared a specific folder in container, ex. licenced files)
+        - [string path local]<>[String path docker] 
     rmks                : [string,'']               (any remarks)
-    copyDockerFilesDir2SharedFolder: [string,'']    (directory where you want to copy files from the shared folder)
 Inputs: **
   - type                : [string]          ** (biologic type)
     connector           : [[2,4],true]      ** (wich connector)
