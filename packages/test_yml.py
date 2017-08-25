@@ -92,8 +92,8 @@ def test_program(out,yml):
     
 def test_docker(out,yml):
     op = 'Docker'
-    obligations = ['imageName','cmd','sharedFolder']
-    warnings    = ['dockerName','rmks','copyDockerFilesDir2SharedFolder']
+    obligations = ['imageName','cmd']
+    warnings    = ['dockerName','rmks','copyDockerFilesDir2SharedFolder','sharedFolder']
     
     for o in obligations:
         if o not in yml[op] or yml[op][o] == "" or yml[op][o] == None:

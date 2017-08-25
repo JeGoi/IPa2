@@ -68,6 +68,7 @@ def write_header(out, yml):
                 "import java.util.ArrayList;\n"+
                 "import java.util.logging.Level;\n"+
                 "import java.util.logging.Logger;\n"+
+                "import java.util.HashMap;\n"+
                 "\n"+
                 "\n"+
                 "/**\n"+
@@ -88,12 +89,48 @@ def write_variables(out, yml):
             )
 
     if 'Docker' in yml and yml['Docker'] is not None:
-        if yml['Docker']['dockerName'] == None:
-            yml['Docker']['dockerName'] = yml['Docker']['imageName']
+        doName = u.set_docker_name(yml)
+        yml['Docker']['dockerName'] = doName
+        
         out.write("    private String doImage        = \""+yml['Docker']['imageName']+"\";\n"+
                   "    private String doPgrmPath     = \""+yml['Docker']['cmd']+"\";\n"+
-                  "    private String doSharedFolder = \""+yml['Docker']['sharedFolder']+"\";\n"+
-                  "    private String doName         = \""+yml['Docker']['dockerName']+"\";\n")
+                  "    private String doName         = \""+yml['Docker']['dockerName']+"\";\n"+
+                  "    private String doInputs       = \"/data/inputs/\";\n"+
+                  "    private String doOutputs      = \"/data/outputs/\";\n"+
+                  "    private HashMap<String,String> sharedFolders = new HashMap<String,String>();\n")
+        #
+        # Reecrire cette fonction pour charger les shared folder
+    """
+        
+    public static boolean launchDockerImgAndSharedFolder(String inputsPath, String outputPath, String doName, String doImg) {
+        File f= new File(inputsPath);
+        try {
+            inputsPath = f.getCanonicalPath();
+            if (Util.DirExists(inputsPath)) Util.CreateDir(inputsPath);
+        }catch (IOException e) {
+            System.out.println("Get Canonical Path Failed!");
+            System.out.println(e);
+            e.printStackTrace();
+        }
+        String c = "docker run -v "+inputsPath+":/data/inputs "
+                + "-v "+outputPath+":/data/outputs "
+                + "--name "+doName+" -dit "+doImg;
+        
+        ArrayList<String> sl = Util.runSilentUnixCommand(c,"./");
+        if ((sl.size()==1 && sl.get(0).matches("\\w+"))||
+            (sl.size()> 1 && sl.get(sl.size()-1).matches("\\w+"))) {
+            return true;
+        }
+        return false;
+    }
+
+        if 'sharedFolders' in yml['Docker'] and len(yml['Docker']['sharedFolders']) > 0:
+            for shared in yml['Docker']['sharedFolders']:
+                out.write("    private String doSharedFolder = \""+yml['Docker']['sharedFolders']+"\";\n"+
+
+    """
+        #
+                  
     # Write inputs
     out.write("    //INPUTS\n")
     if len(yml['Inputs']) > 0:
@@ -102,17 +139,16 @@ def write_variables(out, yml):
             if op['type']:
                 out.write("    private String input"+str(x)+"       = \"\";\n")
                 out.write("    private String inputPath"+str(x)+"   = \"\";\n")
-
-                if 'Docker' in yml and yml['Docker'] is not None:
-                    out.write("    private String inputInDo"+str(x)+"   = \"\";\n")
-                    out.write("    private String inputPathDo"+str(x)+" = \"\";\n")
+                #if 'Docker' in yml and yml['Docker'] is not None:
+                    #out.write("    private String inputInDo"+str(x)+"   = \"\";\n")
+                    #out.write("    private String inputPathDo"+str(x)+" = \"\";\n")
                 x = x+1
     else:
         out.write("    //private String input1      = \"\";\n"+
                   "    //private String inputPath1  = \"\";\n")
-        if 'Docker' in yml and yml['Docker'] is not None:
-            out.write("    //private String inputInDo1   = \"\";\n"+
-                      "    //private String inputPathDo1 = \"\";\n")
+        #if 'Docker' in yml and yml['Docker'] is not None:
+            #out.write("    //private String inputInDo1   = \"\";\n")
+            #out.write("    //private String inputPathDo1 = \"\";\n")
 
     # Write outputs
     out.write("    //OUTPUTS\n")
@@ -122,25 +158,27 @@ def write_variables(out, yml):
             if op['type']:
                 out.write("    private String output"+str(x)+"       = \"\";\n")
                 if 'Docker' in yml and yml['Docker'] is not None:
-                    out.write("    private String outputInDo"+str(x)+"   = \"\";\n"+
-                              "    private String outputPathDo"+str(x)+" = \"\";\n")
+                    out.write("    private String outputInDo"+str(x)+"   = \"\";\n")
+                    #out.write("    private String outputPathDo"+str(x)+" = \"\";\n")
                 x = x+1
     else:
         out.write("    //private String output1   =\"\";\n")
         if 'Docker' in yml and yml['Docker'] is not None:
-            out.write("    //private String outputInDo1   = \"\";\n"+
-                      "    //private String outputPathDo1 = \"\";\n")
+            out.write("    //private String outputInDo1   = \"\";\n")
+            #out.write("    //private String outputPathDo1 = \"\";\n")
 
     # Write Paths
     out.write("    //PATHS\n")
     if yml['Program']['outputPath'] is not "":
         s = u.cleanOutuptPath(yml)
-        out.write("    private static final String outputPath = "+s+";\n"+
-                  "    private static final String inputPath  = outputPath+File.separator+\"INPUTS\";\n\n")
+        out.write("    private static final String outputsPath = "+s+";\n")
+        #out.write("    private static final String inputPath  = outputPath+File.separator+\"INPUTS\";\n\n")
     else:
-        out.write("    private static final String outputPath = \".\"+File.separator+\"results\"+File.separator+\""+u.get_program_name(yml)+"\";\n"+
-                  "    private static final String inputPath  = outputPath+File.separator+\"INPUTS\";\n\n")
+        out.write("    private static final String outputsPath = \".\"+File.separator+\"results\"+File.separator+\""+u.get_program_name(yml)+"\";\n")
+        #out.write("    private static final String inputPath  = outputPath+File.separator+\"INPUTS\";\n\n")
+    
     write_tables_of_commands_per_panel(out,yml)
+
 # Variables sub functions
 def write_tables_of_commands_per_panel(out, yml):
     for Panel in yml['Menus']:
@@ -197,6 +235,12 @@ def write_check_requirement(out,yml):
               "    @Override\n"+
               "    public boolean init_checkRequirements(){\n"+
               "\n"+
+              "        // TEST OUTPUT PATH\n"+
+              "        if (!Util.CreateDir(outputsPath) && !Util.DirExists(outputsPath)){\n"+
+              "            setStatus(status_BadRequirements,\"Not able to access or create OUTPUTS directory files\");\n"+
+              "            return false;\n"+
+              "        }\n\n"+
+              "        \n"
               "        // TEST INPUT VARIABLES HERE\n"+
               "        // ports are 3-PortInputUp, 2-PortInputDOWN, 4-PortInputDOWN2\n")
     if len(yml['Inputs']) > 0:
@@ -220,7 +264,8 @@ def write_check_requirement(out,yml):
 
 # Check requirement sub functions
 def write_test_inputs(out,yml):
-    out.write("        //INSERT YOUR INPUT TEST HERE\n")
+    out.write("        \n"+
+              "        //INSERT YOUR INPUT TEST HERE\n")
     if len(yml['Inputs']) > 0:
         x = 1
         for op in yml['Inputs']:
@@ -231,8 +276,7 @@ def write_test_inputs(out,yml):
                               "            return false;\n"+
                               "        }\n")
                 else:
-                    out.write("        //Check if it's else or not\n"+
-                              "        //else \n"+
+                    out.write("        // Please, check if it's \"else if\" or it's a real \"if\"\n"+
                               "        if ("+op['type']+str(x)+".isEmpty()||input"+str(x)+".equals(\"Unknown\")||input"+str(x)+".equals(\"\")){\n"+
                               "            setStatus(status_BadRequirements,\"No "+op['type']+" found.\");\n"+
                               "            return false;\n"+
@@ -243,11 +287,21 @@ def write_test_inputs(out,yml):
                   "        //if (Fastq1.isEmpty()||input1.equals(\"Unknown\")||input1.equals(\"\")){\n"+
                   "        //    setStatus(status_BadRequirements,\"No sequence found.\");\n"+
                   "        //    return false;\n"+
-                  "        }\n")
+                  "        }\n    \n")
     out.write("\n")
 def write_test_Docker(out,yml):
-    write_test_Docker_shared_files(out,yml)
-    write_clean_docker(out)
+    #write_test_Docker_shared_files(out,yml)
+    write_prepare_Docker_shared_files(out,yml)
+    write_docker_init(out)
+    
+def write_prepare_Docker_shared_files(out,yml):
+    allInputsPath = u.get_all_inputspath(yml)
+    out.write("        //PREPARE DOCKER SHARED FILES\n"+
+              "        String[] allInputsPath = {"+allInputsPath+"};\n"+
+              "        sharedFolders = Util.compareTabFilePath(allInputsPath,doInputs);\n"+
+              "        sharedFolders.put(outputsPath,doOutputs);\n")
+    out.write("\n")
+                  
 def write_test_Docker_shared_files(out,yml):
     out.write("        //INSERT DOCKER SHARED FILES COPY HERE\n"+
               "        if (!Util.CreateDir(inputPath) && !Util.DirExists(inputPath)){\n"+
@@ -262,7 +316,7 @@ def write_test_Docker_shared_files(out,yml):
         x = 1
         for op in yml['Inputs']:
             if op['type']:
-                out.write("        inputPathDo"+str(x)+" = outputPath+File.separator+\"INPUTS\"+File.separator+input"+str(x)+";\n"+
+                out.write("        inputPathDo"+str(x)+" = outputsPath+File.separator+\"INPUTS\"+File.separator+input"+str(x)+";\n"+
                           "        if (!(Util.copy(inputPath"+str(x)+",inputPathDo"+str(x)+"))){\n"+
                           "            setStatus(status_BadRequirements,\"Not able to copy files used by docker container\");\n"+
                           "            return false;\n"+
@@ -271,7 +325,7 @@ def write_test_Docker_shared_files(out,yml):
                           "        input"+str(x)+" = Util.getFileName(inputPath"+str(x)+");\n\n")
                 x = x+1
     else:
-        out.write("        inputPathDo1 = Util.getCanonicalPath(outputPath+File.separator+input1);\n"+
+        out.write("        inputPathDo1 = Util.getCanonicalPath(outputsPath+File.separator+input1);\n"+
                   "        if (!(Util.copy(inputPath1,inputPathDo1))){\n"+
                   "            setStatus(status_BadRequirements,\"Not able to copy files  used by docker container\");\n"+
                   "            return false;\n"+
@@ -279,10 +333,10 @@ def write_test_Docker_shared_files(out,yml):
                   "        inputDo1 = doSharedFolder+File.separator+input1;\n"+
                   "        input1   = Util.getFileName(inputPath1);\n\n")
     out.write("\n")
-def write_clean_docker(out):
+def write_docker_init(out):
     out.write("        // TEST Docker initialisation\n"+
                 "        doName = Docker.getContainersVal(doName);\n"+
-                "        if (!dockerInit(outputPath,doSharedFolder,doName,doImage)){\n"+
+                "        if (!dockerInitContainer(sharedFolders,doName,doImage)){\n"+
                 "            Docker.cleanContainer(doName);\n"+
                 "            setStatus(status_BadRequirements,\"Not able to initiate docker container\");\n"+
                 "            return false;\n"+
@@ -302,6 +356,8 @@ def write_command_line(out,yml):
               "\n")
     write_outputs(out,yml)
     write_options(out,yml)
+    if 'Docker' in yml and yml['Docker'] is not None:
+        write_docker_command_line_creation(out,yml)
     write_command_line_creation(out,yml)
 # Command line sub functions
 def write_outputs(out,yml):
@@ -326,15 +382,15 @@ def write_outputs(out,yml):
         x = 1
         for op in yml['Outputs']:
             if op['type']:
-                out.write("        output"+str(x)+" = outputPath+File.separator+\"OutpuOf_\"+"+inputsNames+"+\""+op['extension']+"\";\n")
+                out.write("        output"+str(x)+" = outputsPath+File.separator+\"OutputOf_\"+input"+str(x)+"+\""+op['extension']+"\";\n")
                 if 'Docker' in yml and yml['Docker'] is not None:
-                    out.write("        outputInDo"+str(x)+" = doSharedFolder+File.separator+\"OutpuOf_\"+"+inputsNames+"+\""+op['extension']+"\";\n")
+                    out.write("        outputInDo"+str(x)+" = doOutputs+\"OutputOf_\"+input"+str(x)+"+\""+op['extension']+"\";\n")
                 x = x+1
     else:
         out.write("        // No output : Example\n"+
-                    "        //output1 = outputPath+File.separator+\"OutpuOf_\"+input1+\".outputextension\";\n")
+                    "        //output1 = outputsPath+File.separator+\"OutpuOf_\"+input1+\".outputextension\";\n")
         if 'Docker' in yml and yml['Docker'] is not None:
-            out.write("        //outputInDo1 = doSharedFolder+File.separator+\"OutpuOf_\"+input1+\".outputextension\";\n")
+            out.write("        //outputInDo1 = doOutputs+\"OutpuOf_\"+input1+\".outputextension\";\n")
 def write_options(out,yml):
     tabPerPanel = u.get_tab_per_panel(out,yml)
     out.write("        \n"+
@@ -345,6 +401,29 @@ def write_options(out,yml):
             out.write("        if (properties.isSet(\""+op+"\"))\n"+
                       "            options += Util.findOptionsNew("+op+",properties);\n")
     out.write("        \n")
+def write_docker_command_line_creation(out,yml):
+    allInputsPath = u.get_all_inputspath(yml)
+    dockerOutputs = ""
+    if len(yml['Outputs']) > 0:
+        x = 1
+        for op in yml['Outputs']:
+            if op['type']:
+                dockerOutputs += "+ "
+                if op['command2Call']:
+                    com = op['command2Call']
+                    dockerOutputs += " "+com+" "
+                dockerOutputs += " outputInDo"+str(x)+" "
+            x = x+1
+    else:
+        dockerOutputs += "//com["+str(i)+"]= outputInDo1"
+    out.write("        \n"+
+              "        // Docker command line\n"+
+              "        String[] allInputsPath = {"+allInputsPath+"};\n"+
+              "        String allDockerInputs = Util.createAllDockerInputs(allInputsPath,doInputs);\n"+
+              "        String dockerCli = doPgrmPath+\" \"+options + allDockerInputs "+dockerOutputs+"\n"+ #definir outputs
+              "        String dockerBashCli = \"exec -i \"+doName+\" sh -c \'./dockerBash.sh\'\";\n")
+
+
 def write_command_line_creation(out,yml):
     out.write("        \n"+
                 "        // Command line creation\n"+
@@ -356,50 +435,43 @@ def write_command_line_creation(out,yml):
                 "        com[2]= properties.getExecutable();\n")
     i = 3
     if 'Docker' in yml and yml['Docker'] is not None:
-        out.write("        com["+str(i)+"]= \"exec \"+doName+\" \"+doPgrmPath;\n")
-        i += 1
-    out.write("        com["+str(i)+"]= options;\n")
-
-    if len(yml['Inputs']) > 0:
-        x = 1
-        for op in yml['Inputs']:
-            if op['type']:
-                i += 1
-                inputName = "input"
-                if 'Docker' in yml and yml['Docker'] is not None:
-                    inputName = inputName+"InDo"
-                else:
-                    inputName = inputName+"Path"
-                inputName = inputName+str(x)
-                if op['command2Call']:
-                    com = op['command2Call']
-                    out.write("        if ("+inputName+" != (\"Unknown\") || "+inputName+".isEmpty()) {\n"+
-                              "            com["+str(i)+"]= \""+com+" \"+"+inputName+";\n"+
-                              "        }\n")
-                else:
-                    out.write("        com["+str(i)+"]= "+inputName+";\n")
-            x = x+1
+        out.write("        com["+str(i)+"]= dockerBashCli;\n")
     else:
-        i += 1
-        out.write("        com["+str(i)+"]= inputPath1;\n")
+        out.write("        com["+str(i)+"]= options;\n")
 
-    if len(yml['Outputs']) > 0:
-        x = 1
-        for op in yml['Outputs']:
-            if op['type']:
-                i += 1
-                if op['command2Call']:
-                    com = op['command2Call']
-                    out.write("        com["+str(i)+"]= \""+com+" \"+output")
-                else:
-                    out.write("        com["+str(i)+"]= output")
-                if 'Docker' in yml and yml['Docker'] is not None:
-                    out.write("InDo")
-                out.write(str(x)+";\n")
-            x = x+1
-    else:
-        i += 1
-        out.write("        //com["+str(i)+"]=outputPath1;\n")
+        if len(yml['Inputs']) > 0:
+            x = 1
+            for op in yml['Inputs']:
+                if op['type']:
+                    i += 1
+                    inputName = "inputPath"+str(x)
+                    if op['command2Call']:
+                        com = op['command2Call']
+                        out.write("        if ("+inputName+" != (\"Unknown\") || "+inputName+".isEmpty()) {\n"+
+                                  "            com["+str(i)+"]= \""+com+" \"+"+inputName+";\n"+
+                                  "        }\n")
+                    else:
+                        out.write("        com["+str(i)+"]= "+inputName+";\n")
+                x = x+1
+        else:
+            i += 1
+            out.write("        com["+str(i)+"]= inputPath1;\n")
+
+        if len(yml['Outputs']) > 0:
+            x = 1
+            for op in yml['Outputs']:
+                if op['type']:
+                    i += 1
+                    if op['command2Call']:
+                        com = op['command2Call']
+                        out.write("        com["+str(i)+"]= \""+com+" \"+output")
+                    else:
+                        out.write("        com["+str(i)+"]= output")
+                    out.write(str(x)+";\n")
+                x = x+1
+        else:
+            i += 1
+            out.write("        //com["+str(i)+"]=outputPath1;\n")
 
     out.write("        return com;\n"+
                 "    }\n"+
@@ -434,9 +506,9 @@ def write_output_parsing(out, yml):
               "    @Override\n"+
               "    public void post_parseOutput(){\n")
     if 'Docker' in yml and yml['Docker'] is not None:
-        if 'copyDockerDir2SharedFolder' in yml['Docker'] and yml['Docker']['copyDockerDir2SharedFolder']:
-            copy_docker_files(out,yml)
-        remove_Docker_imputs(out)
+        #if 'copyDockerDir2SharedFolder' in yml['Docker'] and yml['Docker']['copyDockerDir2SharedFolder']:
+        #    copy_docker_files(out,yml)
+        out.write("        Docker.cleanContainer(doName);\n")
     if 'outputFilesFromOutputPath' in yml['Program'] and yml['Program']['outputFilesFromOutputPath']:
         save_output_files(out,yml)
     write_output_results(out,yml)
@@ -446,9 +518,6 @@ def copy_docker_files(out,yml):
         if op:
             out.write("        boolean b1 = Docker.copyDockerDirToSharedDir(\""+op+"\",doSharedFolder,doName;\n"+
                       "        if (!b1) setStatus(status_BadRequirements,\"Docker Files Copy Failed\");\n")
-def remove_Docker_imputs(out):
-    out.write("        Util.deleteDir(inputPath);\n"+
-              "        Docker.cleanContainer(doName);\n")
 def save_output_files(out,yml):
     for op in yml['Program']['outputFilesFromOutputPath']:
         if op:

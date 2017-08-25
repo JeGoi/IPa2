@@ -891,6 +891,18 @@ def isBiologicType(v):
     else:
         return False
 
+def get_all_inputspath(yml):
+    allInputsPath = ""
+    if len(yml['Inputs']) > 0:
+        x = 1
+        for op in yml['Inputs']:
+            if op['type']:
+                if x < len(yml['Inputs']):
+                    allInputsPath += "inputPath"+str(x)+","
+                else :
+                    allInputsPath += "inputPath"+str(x)+""
+                x = x+1
+    return allInputsPath
 
 def wait():
     raw_input("Press Enter to continue...")
