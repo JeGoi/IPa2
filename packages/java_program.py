@@ -184,8 +184,8 @@ def write_tables_of_commands_per_panel(out, yml):
     for Panel in yml['Menus']:
         pName   = Panel['name']
         pNameS = u.name_without_space(Panel['name'])
-        out.write("    private static final String[] "+pNameS+" = {\n")
         if 'Panel' in Panel:
+            out.write("    private static final String[] "+pNameS+" = {\n")
             y = 0
             for Tab in Panel['Panel']:
                 tName   = Tab['tab']
@@ -226,7 +226,7 @@ def write_tables_of_commands_per_panel(out, yml):
                 else:
                     out.write("\n")
                 y+=1
-        out.write("    };\n\n")
+            out.write("    };\n\n")
 #
 # Check requirement
 #
