@@ -184,13 +184,13 @@ def write_tables_of_commands_per_panel(out, yml):
     for Panel in yml['Menus']:
         pName   = Panel['name']
         pNameS = u.name_without_space(Panel['name'])
+        out.write("    private static final String[] "+pNameS+" = {\n")
         if 'Panel' in Panel:
+            y = 0
             for Tab in Panel['Panel']:
                 tName   = Tab['tab']
-                tNameS  = u.name_without_space(tName)
                 if 'Arguments' in Tab:
                     # Print tab for functions and add it
-                    out.write("    private static final String[] "+pNameS+" = {\n")
                     # Print commands object name
                     cSize   = len(Tab['Arguments'])
                     x       = 0
@@ -217,11 +217,16 @@ def write_tables_of_commands_per_panel(out, yml):
                             if 'values' in Arguments and \
                                 Arguments['values'] is not None and \
                                 Arguments['values']['vType'] is not None:
-                                out.write("//,\n        //\""+v+"\"\n")
+                                out.write("//,\n        //\""+v+"\"")
                             else:
-                                out.write("\n")
+                                out.write("")
                         x += 1
-                    out.write("    };\n\n")
+                if (y<len(Panel['Panel'])-1):
+                    out.write(",\n")
+                else:
+                    out.write("\n")
+                y+=1
+        out.write("    };\n\n")
 #
 # Check requirement
 #
