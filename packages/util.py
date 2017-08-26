@@ -652,11 +652,12 @@ def get_tab_per_panel(out, yml):
     tabPerPanel = []
     for Panel in yml['Menus']:
         if 'Panel' in Panel:
-            for Tab in Panel['Panel']:
-                if 'Arguments' in Tab:
-                    tName   = Tab['tab']
-                    tNameS  = replace_space_by_underscore(tName)
-                    tabPerPanel.append(tNameS)
+            tabPerPanel.append(name_without_space(Panel['name']))
+#            for Tab in Panel['Panel']:
+#                if 'Arguments' in Tab:
+#                    tName   = Tab['tab']
+#                    tNameS  = replace_space_by_underscore(tName)
+#                    tabPerPanel.append(tNameS)
     return tabPerPanel
 
 def get_java_eventHandler(s):

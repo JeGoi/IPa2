@@ -183,13 +183,14 @@ def write_variables(out, yml):
 def write_tables_of_commands_per_panel(out, yml):
     for Panel in yml['Menus']:
         pName   = Panel['name']
+        pNameS = u.name_without_space(Panel['name'])
         if 'Panel' in Panel:
             for Tab in Panel['Panel']:
                 tName   = Tab['tab']
                 tNameS  = u.name_without_space(tName)
                 if 'Arguments' in Tab:
                     # Print tab for functions and add it
-                    out.write("    private static final String[] "+tNameS+" = {\n")
+                    out.write("    private static final String[] "+pNameS+" = {\n")
                     # Print commands object name
                     cSize   = len(Tab['Arguments'])
                     x       = 0
@@ -236,7 +237,14 @@ def write_check_requirement(out,yml):
               "    public boolean init_checkRequirements(){\n"+
               "\n"+
               "        // TEST OUTPUT PATH\n"+
-              "        if (!Util.CreateDir(outputsPath) && !Util.DirExists(outputsPath)){\n"+
+              "        String specificId = Util.returnRandomAndDate();\n"+
+              "        if (properties.isSet(\"ObjectID\")) {\n"+
+              "            String oId = properties.get(\"ObjectID\");\n"+
+              "            oId = Util.replaceSpaceByUnderscore(oId);\n"+
+              "            specificId = specificId+\"_\"+oId;\n"+
+              "        }\n"+
+              "        String specificPath = outputsPath+specificId;\n"+
+              "        if (!Util.CreateDir(specificPath) && !Util.DirExists(specificPath)){\n"+
               "            setStatus(status_BadRequirements,\"Not able to access or create OUTPUTS directory files\");\n"+
               "            return false;\n"+
               "        }\n\n"+
@@ -256,6 +264,7 @@ def write_check_requirement(out,yml):
                    "        //Vector<Integer>Fastq1    = properties.getInputID(\"FastqFile\",PortInputDOWN);\n"+
                    "        //inputPath1 = FastqFile.getVectorFilePath(Fastq1);\n"+
                    "        //input1     = Util.getFileNameAndExt(inputPath1);\n")
+    write_outputs(out,yml)
     write_test_inputs(out,yml)
     if 'Docker' in yml and yml['Docker'] is not None:
         write_test_Docker(out,yml)
@@ -289,6 +298,37 @@ def write_test_inputs(out,yml):
                   "        //    return false;\n"+
                   "        }\n    \n")
     out.write("\n")
+def write_outputs(out,yml):
+    out.write("        //Create ouputs\n")
+    outputsSize = len(yml['Outputs'])
+    inputsSize = len(yml['Inputs'])
+
+    inputsNames = ""
+    if inputsSize > 1:
+        x = 1
+        for op in yml['Inputs']:
+            if op['type']:
+                if x < inputsSize:
+                    inputsNames = inputsNames+"input"+str(x)+"+\"_\"+"
+                else:
+                    inputsNames = inputsNames+"input"+str(x)
+                x = x+1
+    else :
+        inputsNames = "input1"
+
+    if outputsSize > 0:
+        x = 1
+        for op in yml['Outputs']:
+            if op['type']:
+                out.write("        output"+str(x)+" = specificPath+File.separator+\"OutputOf_\"+input"+str(x)+"+\""+op['extension']+"\";\n")
+                if 'Docker' in yml and yml['Docker'] is not None:
+                    out.write("        outputInDo"+str(x)+" = doOutputs+\"OutputOf_\"+input"+str(x)+"+\""+op['extension']+"\";\n")
+                x = x+1
+    else:
+        out.write("        // No output : Example\n"+
+                    "        //output1 = specificPath+File.separator+\"OutpuOf_\"+input1+\".outputextension\";\n")
+        if 'Docker' in yml and yml['Docker'] is not None:
+            out.write("        //outputInDo1 = doOutputs+\"OutpuOf_\"+input1+\".outputextension\";\n")
 def write_test_Docker(out,yml):
     #write_test_Docker_shared_files(out,yml)
     write_prepare_Docker_shared_files(out,yml)
@@ -298,8 +338,8 @@ def write_prepare_Docker_shared_files(out,yml):
     allInputsPath = u.get_all_inputspath(yml)
     out.write("        //PREPARE DOCKER SHARED FILES\n"+
               "        String[] allInputsPath = {"+allInputsPath+"};\n"+
-              "        sharedFolders = Util.compareTabFilePath(allInputsPath,doInputs);\n"+
-              "        sharedFolders.put(outputsPath,doOutputs);\n")
+              "        sharedFolders = Util.createSharedFolders(allInputsPath,doInputs);\n"+
+              "        sharedFolders.put(specificPath,doOutputs);\n")
     out.write("\n")
                   
 def write_test_Docker_shared_files(out,yml):
@@ -336,11 +376,13 @@ def write_test_Docker_shared_files(out,yml):
 def write_docker_init(out):
     out.write("        // TEST Docker initialisation\n"+
                 "        doName = Docker.getContainersVal(doName);\n"+
-                "        if (!dockerInitContainer(sharedFolders,doName,doImage)){\n"+
+                "        if (!dockerInitContainer(properties,sharedFolders,doName,doImage)){\n"+
                 "            Docker.cleanContainer(doName);\n"+
                 "            setStatus(status_BadRequirements,\"Not able to initiate docker container\");\n"+
                 "            return false;\n"+
                 "         } else {\n"+
+                "             if (properties.isSet(\"CliDockerInit\"))\n"+
+                "                 setStatus(status_running,\"DockerInitCommandLine: \\n$ \"+properties.get(\"CliDockerInit\")+\"\\n\");\n"+
                 "            properties.put(\"DOCKERName\",doName);\n"+
                 "         }\n"+
                 "\n")
@@ -354,43 +396,11 @@ def write_command_line(out,yml):
               "        // In case program is started without edition\n"+
               "        pgrmStartWithoutEdition(properties);\n"+
               "\n")
-    write_outputs(out,yml)
     write_options(out,yml)
     if 'Docker' in yml and yml['Docker'] is not None:
         write_docker_command_line_creation(out,yml)
     write_command_line_creation(out,yml)
 # Command line sub functions
-def write_outputs(out,yml):
-    out.write("        //Create ouputs\n")
-    outputsSize = len(yml['Outputs'])
-    inputsSize = len(yml['Inputs'])
-
-    inputsNames = ""
-    if inputsSize > 1:
-        x = 1
-        for op in yml['Inputs']:
-            if op['type']:
-                if x < inputsSize:
-                    inputsNames = inputsNames+"input"+str(x)+"+\"_\"+"
-                else:
-                    inputsNames = inputsNames+"input"+str(x)
-                x = x+1
-    else :
-        inputsNames = "input1"
-
-    if outputsSize > 0:
-        x = 1
-        for op in yml['Outputs']:
-            if op['type']:
-                out.write("        output"+str(x)+" = outputsPath+File.separator+\"OutputOf_\"+input"+str(x)+"+\""+op['extension']+"\";\n")
-                if 'Docker' in yml and yml['Docker'] is not None:
-                    out.write("        outputInDo"+str(x)+" = doOutputs+\"OutputOf_\"+input"+str(x)+"+\""+op['extension']+"\";\n")
-                x = x+1
-    else:
-        out.write("        // No output : Example\n"+
-                    "        //output1 = outputsPath+File.separator+\"OutpuOf_\"+input1+\".outputextension\";\n")
-        if 'Docker' in yml and yml['Docker'] is not None:
-            out.write("        //outputInDo1 = doOutputs+\"OutpuOf_\"+input1+\".outputextension\";\n")
 def write_options(out,yml):
     tabPerPanel = u.get_tab_per_panel(out,yml)
     out.write("        \n"+
@@ -411,7 +421,7 @@ def write_docker_command_line_creation(out,yml):
                 dockerOutputs += "+ "
                 if op['command2Call']:
                     com = op['command2Call']
-                    dockerOutputs += " "+com+" "
+                    dockerOutputs += " \" "+com+" \" + "
                 dockerOutputs += " outputInDo"+str(x)+" "
             x = x+1
     else:
@@ -420,7 +430,9 @@ def write_docker_command_line_creation(out,yml):
               "        // Docker command line\n"+
               "        String[] allInputsPath = {"+allInputsPath+"};\n"+
               "        String allDockerInputs = Util.createAllDockerInputs(allInputsPath,doInputs);\n"+
-              "        String dockerCli = doPgrmPath+\" \"+options + allDockerInputs "+dockerOutputs+"\n"+ #definir outputs
+              "        String dockerCli = doPgrmPath+\" \"+options + allDockerInputs "+dockerOutputs+";\n"+
+              "        Docker.prepareDockerBashFile(properties,doName,dockerCli);\n\n"+
+              "        setStatus(status_running,\"DockerRunningCommandLine: \\n$ \"+dockerCli+\"\\n\");\n"+
               "        String dockerBashCli = \"exec -i \"+doName+\" sh -c \'./dockerBash.sh\'\";\n")
 
 
