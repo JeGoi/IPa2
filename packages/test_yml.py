@@ -102,10 +102,10 @@ def test_docker(out,yml):
         if w not in yml[op]:
             print war+'Yaml '+op+' part may need "'+w+'"'
     
-    if 'dockerName' in yml[op]:
-        if yml[op]['dockerName'] == "" or yml[op]['dockerName'] == None:
-            print war+'Yaml '+op+' part may need "dockerName"'
-            yml[op]['dockerName'] = yml[op]['imageName']
+    #if 'dockerName' in yml[op]:
+    #    if yml[op]['dockerName'] == "" or yml[op]['dockerName'] == None:
+    #        print war+'Yaml '+op+' part may need "dockerName"'
+    #        yml[op]['dockerName'] = yml[op]['imageName']
     # Image Name is define and not empty
     # Command is define and not empty
     # Docker Name is define and not empty, default = Image Name
