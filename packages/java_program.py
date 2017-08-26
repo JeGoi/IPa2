@@ -325,15 +325,21 @@ def write_outputs(out,yml):
         x = 1
         for op in yml['Outputs']:
             if op['type']:
+                com = ""
+                if op['command2Call']:
+                    com = op['command2Call']
                 out.write("        output"+str(x)+" = specificPath+File.separator+\"OutputOf_\"+input"+str(x)+"+\""+op['extension']+"\";\n")
+                out.write("        output"+str(x)+" = Util.onlyOneOutputOf(output"+str(x)+");\n")
                 if 'Docker' in yml and yml['Docker'] is not None:
-                    out.write("        outputInDo"+str(x)+" = doOutputs+\"OutputOf_\"+input"+str(x)+"+\""+op['extension']+"\";\n")
+                    out.write("        outputInDo"+str(x)+" = \" "+com+" \"+doOutputs+\"OutputOf_\"+input"+str(x)+"+\""+op['extension']+"\";\n")
+                    out.write("        outputInDo"+str(x)+" = Util.onlyOneOutputOf(outputInDo"+str(x)+");\n")
                 x = x+1
     else:
         out.write("        // No output : Example\n"+
-                    "        //output1 = specificPath+File.separator+\"OutpuOf_\"+input1+\".outputextension\";\n")
+                    "        //output1 = specificPath+File.separator+\"OutputOf_\"+input1+\".outputextension\";\n")
         if 'Docker' in yml and yml['Docker'] is not None:
-            out.write("        //outputInDo1 = doOutputs+\"OutpuOf_\"+input1+\".outputextension\";\n")
+            out.write("        //outputInDo1 = doOutputs+\"OutputOf_\"+input1+\".outputextension\";\n")
+
 def write_test_Docker(out,yml):
     #write_test_Docker_shared_files(out,yml)
     write_prepare_Docker_shared_files(out,yml)
@@ -423,18 +429,28 @@ def write_docker_command_line_creation(out,yml):
         x = 1
         for op in yml['Outputs']:
             if op['type']:
-                dockerOutputs += "+ "
-                if op['command2Call']:
-                    com = op['command2Call']
-                    dockerOutputs += " \" "+com+" \" + "
-                dockerOutputs += " outputInDo"+str(x)+" "
+                dockerOutputs += "+ outputInDo"+str(x)+" "
             x = x+1
     else:
-        dockerOutputs += "//com["+str(i)+"]= outputInDo1"
+        dockerOutputs += "outputInDo1"
+
     out.write("        \n"+
               "        // Docker command line\n"+
-              "        String[] allInputsPath = {"+allInputsPath+"};\n"+
-              "        String allDockerInputs = Util.createAllDockerInputs(allInputsPath,doInputs);\n"+
+              "        String[] allInputsPathOrder = {"+allInputsPath+"};\n"+
+              "        HashMap<String,String> allInputsPath =  new HashMap<String,String>();\n")
+
+    if len(yml['Inputs']) > 0:
+        x = 1
+        for op in yml['Inputs']:
+            if op['type']:
+                inputName = "inputPath"+str(x)
+                if op['command2Call']:
+                    com = op['command2Call']
+                    out.write("        allInputsPath.put("+inputName+",\""+com+"\");\n")
+                else:
+                    out.write("        allInputsPath.put("+inputName+",\"\");\n")
+            x = x+1
+    out.write("        String allDockerInputs = Util.createAllDockerInputs(allInputsPath,allInputsPathOrder,doInputs);\n"+
               "        String dockerCli = doPgrmPath+\" \"+options + allDockerInputs "+dockerOutputs+";\n"+
               "        Docker.prepareDockerBashFile(properties,doName,dockerCli);\n\n"+
               "        setStatus(status_running,\"DockerRunningCommandLine: \\n$ \"+dockerCli+\"\\n\");\n"+
