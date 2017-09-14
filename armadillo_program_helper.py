@@ -29,6 +29,10 @@ Examples are available in the sub directory ./examples
 
 
 """
+UPDATE:
+- java_program to set to the new Dcoker template
+- java_properties add ExecutableDocker from ['Docker']['cmd']
+
 TO DO :
 - change OneConnectorOnlyFor and SolelyConnectors for true and false
 - If isMenu is false, change button to box
