@@ -23,10 +23,21 @@ def create_program_file(yml,armaDir):
 # ===============================================
 #  SUB FUNCTIONS TO CREATE Programs File
 # ===============================================
+
 #
 # Header and variables
 #
 def write_header(out, yml):
+    write_header_start(out,yml)
+    write_import_class(out,yml)
+    write_author_date(out,yml)
+    write_variables(out,yml)
+    write_header_end(out,yml)
+#
+# Header and variables
+#
+
+def write_header_start(out, yml):
     out.write("/*\n"+
                 "* To change this license header, choose License Headers in Project Properties.\n"+
                 "* To change this template file, choose Tools | Templates\n"+
@@ -37,6 +48,8 @@ def write_header(out, yml):
                 "\n"+
                 "package programs;\n"+
                 "\n")
+
+def write_import_class(out,yml):
     importBiologicType = {}
     for op in yml['Inputs']:
         if 'type' in op:
@@ -51,37 +64,37 @@ def write_header(out, yml):
 
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("import configuration.Docker;\n")
-
+    
     out.write("import biologic.Results;\n"+
+                "import configuration.Cluster;\n"+
                 "import configuration.Util;\n"+
-                "import java.io.File;\n"+
-                "import java.util.Vector;\n"+
-                "import java.util.Hashtable;\n"+
-                "import java.util.Map;\n"+
-                "import java.util.Iterator;\n"+
                 "import program.RunProgram;\n"+
-                "import static program.RunProgram.PortInputUP;\n"+
                 "import static program.RunProgram.df;\n"+
+                "import static program.RunProgram.PortInputUP;\n"+
                 "import static program.RunProgram.status_error;\n"+
+                "import static program.RunProgram.status_running;\n"+
                 "import workflows.workflow_properties;\n"+
                 "import java.io.IOException;\n"+
+                "import java.io.File;\n"+
                 "import java.util.ArrayList;\n"+
+                "import java.util.Arrays;\n"+
+                "import java.util.HashMap;\n"+
+                "import java.util.Hashtable;\n"+
+                "import java.util.Iterator;\n"+
                 "import java.util.logging.Level;\n"+
                 "import java.util.logging.Logger;\n"+
-                "import java.util.HashMap;\n"+
-                "\n"+
-                "\n"+
-                "/**\n"+
+                "import java.util.Map;\n"+
+                "import java.util.Vector;\n"+
+                "import org.apache.commons.lang.StringUtils;\n"+
+                "\n")
+
+def write_author_date(out,yml)
+    out.write("/**\n"+
                 " *\n"+
                 " * @author "+yml['author']+"\n"+
                 " * @date "+yml['date']+"\n"+
                 " *\n"+
                 " */\n")
-    write_variables(out,yml)
-    out.write("\n    public "+u.get_program_name(yml)+"(workflow_properties properties){\n"+
-                "        this.properties=properties;\n"+
-                "        execute();\n"+
-                "    }\n")
 
 def write_variables(out, yml):
     out.write("public class "+u.get_program_name(yml)+" extends RunProgram {\n"+
@@ -138,6 +151,7 @@ def write_variables(out, yml):
         for op in yml['Inputs']:
             if op['type']:
                 out.write("    private String input"+str(x)+"       = \"\";\n")
+                out.write("    private String inputId"+str(x)+"   = \"\";\n")
                 out.write("    private String inputPath"+str(x)+"   = \"\";\n")
                 #if 'Docker' in yml and yml['Docker'] is not None:
                     #out.write("    private String inputInDo"+str(x)+"   = \"\";\n")
@@ -174,7 +188,8 @@ def write_variables(out, yml):
         out.write("    private static final String outputsPath = "+s+";\n")
         #out.write("    private static final String inputPath  = outputPath+File.separator+\"INPUTS\";\n\n")
     else:
-        out.write("    private static final String outputsPath = \".\"+File.separator+\"results\"+File.separator+\""+u.get_program_name(yml)+"\";\n")
+        out.write("    private static final String outputsPath = \"\";\n")
+        #out.write("    private static final String outputsPath = \".\"+File.separator+\"results\"+File.separator+\""+u.get_program_name(yml)+"\";\n")
         #out.write("    private static final String inputPath  = outputPath+File.separator+\"INPUTS\";\n\n")
     
     write_tables_of_commands_per_panel(out,yml)
@@ -227,34 +242,66 @@ def write_tables_of_commands_per_panel(out, yml):
                     out.write("\n")
                 y+=1
             out.write("    };\n\n")
+
+def write_header_end(out,yml):
+    out.write("\n    public "+u.get_program_name(yml)+"(workflow_properties properties){\n"+
+                "        this.properties=properties;\n"+
+                "        execute();\n"+
+                "    }\n")
+
 #
 # Check requirement
 #
 def write_check_requirement(out,yml):
+    write_check_requirement_start(out,yml)
+    write_prepare_outputs_path(out,yml)
+    write_get_inputs(out,yml)
+    write_test_inputs(out,yml)
+    write_outputs(out,yml)
+    if 'Docker' in yml and yml['Docker'] is not None:
+        write_test_Docker(out,yml)
+    write_check_requirement_end(out,yml)
+#
+# Check requirement
+#
+
+def write_check_requirement_start(out,yml):
+    out.write("\n"+
+              "    @Override\n"+
+              "    public boolean init_checkRequirements(){\n"+
+              "\n"+
+              "        // In case program is started without edition\n"+
+              "        pgrmStartWithoutEdition(properties);\n"+
+              "\n")
+
+
+# Prepare inputs data
+def write_prepare_outputs_path(out,yml):
+    out.write("\n        // TEST OUTPUT PATH\n"+
+              "        String specificId = Util.returnRandomAndDate();\n"+
+              "        if (properties.isSet(\"ObjectID\")) {\n"+
+              "            String oId = properties.get(\"ObjectID\");\n"+
+              "            oId = Util.replaceSpaceByUnderscore(oId);\n"+
+              "            specificId = specificId+\"_\"+oId;\n"+
+              "        }\n")
+    if yml['Program']['outputsPath'] is "":
+        out.write("        outputsPath=Util.getParentOfFile(inputPath1);\n")
+    out.write("        String specificPath = outputsPath+specificId;\n"+
+              "        if (!Util.CreateDir(specificPath) && !Util.DirExists(specificPath)){\n"+
+              "            setStatus(status_BadRequirements,\"Not able to access or create OUTPUTS directory files\");\n"+
+              "            return false;\n"+
+              "        }\n\n"+
+              "        \n")
+
+# Prepare inputs data
+def write_get_inputs(out,yml):
     portToName = {
         "true":"PortInputDOWN",
         3:"PortInputUP",
         2:"PortInputDOWN",
         4:"PortInputDOWN2"
     }
-    out.write("\n"+
-              "    @Override\n"+
-              "    public boolean init_checkRequirements(){\n"+
-              "\n"+
-              "        // TEST OUTPUT PATH\n"+
-              "        String specificId = Util.returnRandomAndDate();\n"+
-              "        if (properties.isSet(\"ObjectID\")) {\n"+
-              "            String oId = properties.get(\"ObjectID\");\n"+
-              "            oId = Util.replaceSpaceByUnderscore(oId);\n"+
-              "            specificId = specificId+\"_\"+oId;\n"+
-              "        }\n"+
-              "        String specificPath = outputsPath+specificId;\n"+
-              "        if (!Util.CreateDir(specificPath) && !Util.DirExists(specificPath)){\n"+
-              "            setStatus(status_BadRequirements,\"Not able to access or create OUTPUTS directory files\");\n"+
-              "            return false;\n"+
-              "        }\n\n"+
-              "        \n"
-              "        // TEST INPUT VARIABLES HERE\n"+
+    out.write("        // TEST INPUT VARIABLES HERE\n"+
               "        // ports are 3-PortInputUp, 2-PortInputDOWN, 4-PortInputDOWN2\n")
     if len(yml['Inputs']) > 0:
         x = 1
@@ -269,12 +316,7 @@ def write_check_requirement(out,yml):
                    "        //Vector<Integer>Fastq1    = properties.getInputID(\"FastqFile\",PortInputDOWN);\n"+
                    "        //inputPath1 = FastqFile.getVectorFilePath(Fastq1);\n"+
                    "        //input1     = Util.getFileNameAndExt(inputPath1);\n")
-    write_outputs(out,yml)
-    write_test_inputs(out,yml)
-    if 'Docker' in yml and yml['Docker'] is not None:
-        write_test_Docker(out,yml)
-    out.write("        return true;\n"+
-              "    }\n")
+
 
 # Check requirement sub functions
 def write_test_inputs(out,yml):
@@ -303,6 +345,7 @@ def write_test_inputs(out,yml):
                   "        //    return false;\n"+
                   "        }\n    \n")
     out.write("\n")
+    
 def write_outputs(out,yml):
     out.write("        //Create ouputs\n")
     outputsSize = len(yml['Outputs'])
@@ -336,22 +379,44 @@ def write_outputs(out,yml):
                 x = x+1
     else:
         out.write("        // No output : Example\n"+
-                    "        //output1 = specificPath+File.separator+\"OutputOf_\"+input1+\".outputextension\";\n")
+                  "        //output1 = specificPath+File.separator+\"OutputOf_\"+input1+\".outputextension\";\n"+
+                  "        //output"+str(x)+" = Util.onlyOneOutputOf(output1);\n")
         if 'Docker' in yml and yml['Docker'] is not None:
             out.write("        //outputInDo1 = doOutputs+\"OutputOf_\"+input1+\".outputextension\";\n")
+            out.write("        //outputInDo1 = Util.onlyOneOutputOf(outputInDo1);\n")
 
 def write_test_Docker(out,yml):
     #write_test_Docker_shared_files(out,yml)
     write_prepare_Docker_shared_files(out,yml)
+    write_prepare_Docker_Cluster_relations(out,yml)
     write_docker_init(out)
     
 def write_prepare_Docker_shared_files(out,yml):
     allInputsPath = u.get_all_inputspath(yml)
-    out.write("        //PREPARE DOCKER SHARED FILES\n"+
+    allInputsID   = u.get_all_inputsId(yml)
+    out.write("        // Prepare shared folders\n"+
               "        String[] allInputsPath = {"+allInputsPath+"};\n"+
-              "        sharedFolders = Util.createSharedFolders(allInputsPath,doInputs);\n"+
-              "        sharedFolders.put(specificPath,doOutputs);\n")
-    out.write("\n")
+              "        String[] simpleId = {"+allInputsID+"};\n"+
+              "        sharedFolders = Docker.createSharedFolders(allInputsPath,simpleId,doInputs);\n"+
+              "        sharedFolders.put(specificPath,doOutputs);\n"+
+              "\n")
+              
+    out.write("        // Prepare inputs\n"+
+              "        HashMap<String,String> pathAndArg = new HashMap<String,String>();\n")
+    if len(yml['Inputs']) > 0:
+        x = 1
+        for op in yml['Inputs']:
+            if op['type']:
+                out.write("        pathAndArg.put(inputPath"+str(x)+","");\n")
+                x = x+1
+    out.write("        allDoInputs = Docker.createAllDockerInputs(pathAndArg,allInputsPath,simpleId,doInputs);\n"+
+              "\n")
+              
+def write_prepare_Docker_Cluster_relations(out,yml):
+    out.write("        // Prepare cluster relations\n"+
+              "        Cluster.createLinkDockerClusterInputs(properties,allInputsPath,simpleId,doInputs);\n"+
+              "        Cluster.createLinkDockerClusterOutput(properties,output1,outputInDo1);\n"+
+              "\n")
                   
 def write_test_Docker_shared_files(out,yml):
     out.write("        //INSERT DOCKER SHARED FILES COPY HERE\n"+
@@ -385,32 +450,50 @@ def write_test_Docker_shared_files(out,yml):
                   "        input1   = Util.getFileName(inputPath1);\n\n")
     out.write("\n")
 def write_docker_init(out):
-    out.write("        // TEST Docker initialisation\n"+
-                "        doName = Docker.getContainersVal(doName);\n"+
-                "        if (!dockerInitContainer(properties,sharedFolders,doName,doImage)){\n"+
-                "            Docker.cleanContainer(doName);\n"+
-                "            setStatus(status_BadRequirements,\"Not able to initiate docker container\");\n"+
-                "            return false;\n"+
-                "         } else {\n"+
-                "             if (properties.isSet(\"CliDockerInit\"))\n"+
-                "                 setStatus(status_running,\"DockerInitCommandLine: \\n$ \"+properties.get(\"CliDockerInit\")+\"\\n\");\n"+
-                "            properties.put(\"DOCKERName\",doName);\n"+
-                "         }\n"+
-                "\n")
+    out.write("        // DOCKER INIT\n"+
+              "        long startTime = System.nanoTime();\n"+
+              "        if (Docker.isDockerHere(properties)){\n"+
+              "            doName = Docker.getContainerName(properties,doName);\n"+
+              "            if (!dockerInitContainer(properties,sharedFolders, doName, doImage))\n"+
+              "                return false;\n"+
+              "        } else {\n"+
+              "            setStatus(status_BadRequirements,\"Docker is not found. Please install docker\");\n"+
+              "            return false;\n"+
+              "        }\n"+
+              "        long endTime = System.nanoTime();\n"+
+              "        long duration = (endTime - startTime);\n"+
+              "        duration = TimeUnit.SECONDS.convert(duration, TimeUnit.NANOSECONDS);\n"+
+              "        setStatus(status_running, \"\t<TIME> Time to launch docker container is >\"+duration+\" s\");\n"+
+              "\n")
+
+def write_check_requirement_end(out,yml):
+    out.write("        return true;\n"+
+              "    }\n"+
+              "\n")
+
+
 #
 # Command line
 #
 def write_command_line(out,yml):
+    write_command_line_start(out,yml)
+    write_options(out,yml)
+    if 'Docker' in yml and yml['Docker'] is not None:
+        write_docker_command_line_creation(out,yml)
+    write_command_line_creation(out,yml)
+#
+# Command line
+#
+
+
+def write_command_line_start(out,yml):
     out.write("    @Override\n"+
               "    public String[] init_createCommandLine() {\n"+
               "\n"+
               "        // In case program is started without edition\n"+
               "        pgrmStartWithoutEdition(properties);\n"+
               "\n")
-    write_options(out,yml)
-    if 'Docker' in yml and yml['Docker'] is not None:
-        write_docker_command_line_creation(out,yml)
-    write_command_line_creation(out,yml)
+
 # Command line sub functions
 def write_options(out,yml):
     tabPerPanel = u.get_tab_per_panel(out,yml)
@@ -422,40 +505,20 @@ def write_options(out,yml):
             out.write("        if (properties.isSet(\""+op+"\"))\n"+
                       "            options += Util.findOptionsNew("+op+",properties);\n")
     out.write("        \n")
+
 def write_docker_command_line_creation(out,yml):
-    allInputsPath = u.get_all_inputspath(yml)
-    dockerOutputs = ""
-    if len(yml['Outputs']) > 0:
-        x = 1
-        for op in yml['Outputs']:
-            if op['type']:
-                dockerOutputs += "+ outputInDo"+str(x)+" "
-            x = x+1
-    else:
-        dockerOutputs += "outputInDo1"
-
-    out.write("        \n"+
-              "        // Docker command line\n"+
-              "        String[] allInputsPathOrder = {"+allInputsPath+"};\n"+
-              "        HashMap<String,String> allInputsPath =  new HashMap<String,String>();\n")
-
-    if len(yml['Inputs']) > 0:
-        x = 1
-        for op in yml['Inputs']:
-            if op['type']:
-                inputName = "inputPath"+str(x)
-                if op['command2Call']:
-                    com = op['command2Call']
-                    out.write("        allInputsPath.put("+inputName+",\""+com+"\");\n")
-                else:
-                    out.write("        allInputsPath.put("+inputName+",\"\");\n")
-            x = x+1
-    out.write("        String allDockerInputs = Util.createAllDockerInputs(allInputsPath,allInputsPathOrder,doInputs);\n"+
-              "        String dockerCli = doPgrmPath+\" \"+options + allDockerInputs "+dockerOutputs+";\n"+
-              "        Docker.prepareDockerBashFile(properties,doName,dockerCli);\n\n"+
-              "        setStatus(status_running,\"DockerRunningCommandLine: \\n$ \"+dockerCli+\"\\n\");\n"+
-              "        String dockerBashCli = \"exec -i \"+doName+\" sh -c \'./dockerBash.sh\'\";\n")
-
+    out.write("        // Docker command line\n"+
+              "        String dockerCli = doPgrmPath+\" \"+options + allDoInputs +  \" > \" +  outputInDo1;\n"+
+              "        long startTime = System.nanoTime();\n"+
+              "        Docker.prepareDockerBashFile(properties,doName,dockerCli);\n"+
+              "        long endTime = System.nanoTime();\n"+
+              "        long duration = (endTime - startTime);\n"+
+              "        duration = TimeUnit.SECONDS.convert(duration, TimeUnit.NANOSECONDS);\n"+
+              "        setStatus(status_running, \"\t<TIME> Time to prepare docker bash file is >\"+duration+\" s\");\n"+
+              "        Cluster.createLinkDockerClusterCli(properties, dockerCli);\n"+
+              "        setStatus(status_running,\"DockerRunningCommandLine: \n$ \"+dockerCli);\n"+
+              "        String dockerBashCli = \"exec -i \"+doName+\" sh -c './dockerBash.sh'\";\n"+
+              "\n")
 
 def write_command_line_creation(out,yml):
     out.write("        \n"+
@@ -526,10 +589,25 @@ def write_command_line_creation(out,yml):
     else:
         out.write("           //if (!properties.isSet(\"\")) Util.getDefaultPgrmValues(properties, true);\n")
     out.write("        }\n")
+
+
 #
 # Output Parsing
 #
 def write_output_parsing(out, yml):
+    write_output_parsing_start(out, yml)
+    if 'Docker' in yml and yml['Docker'] is not None:
+        #if 'copyDockerDir2SharedFolder' in yml['Docker'] and yml['Docker']['copyDockerDir2SharedFolder']:
+        #    copy_docker_files(out,yml)
+        out.write("        Docker.cleanContainer(doName);\n")
+    if 'outputFilesFromOutputPath' in yml['Program'] and yml['Program']['outputFilesFromOutputPath']:
+        save_output_files(out,yml)
+    write_output_results(out,yml)
+#
+# Output Parsing
+#
+
+def write_output_parsing_start(out, yml):
     out.write("        \n"+
               "\n"+
               "    /*\n"+
@@ -538,13 +616,7 @@ def write_output_parsing(out, yml):
               "\n"+
               "    @Override\n"+
               "    public void post_parseOutput(){\n")
-    if 'Docker' in yml and yml['Docker'] is not None:
-        #if 'copyDockerDir2SharedFolder' in yml['Docker'] and yml['Docker']['copyDockerDir2SharedFolder']:
-        #    copy_docker_files(out,yml)
-        out.write("        Docker.cleanContainer(doName);\n")
-    if 'outputFilesFromOutputPath' in yml['Program'] and yml['Program']['outputFilesFromOutputPath']:
-        save_output_files(out,yml)
-    write_output_results(out,yml)
+
 # Output parsing sub functions
 def copy_docker_files(out,yml):
     for op in yml['Docker']['copyDockerDir2SharedFolder']:

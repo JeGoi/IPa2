@@ -905,5 +905,18 @@ def get_all_inputspath(yml):
                 x = x+1
     return allInputsPath
 
+def get_all_inputsId(yml):
+    allInputsId = ""
+    if len(yml['Inputs']) > 0:
+        x = 1
+        for op in yml['Inputs']:
+            if op['type']:
+                if x < len(yml['Inputs']):
+                    allInputsId += "inputId"+str(x)+","
+                else :
+                    allInputsId += "inputId"+str(x)+""
+                x = x+1
+    return allInputsId
+
 def wait():
     raw_input("Press Enter to continue...")
