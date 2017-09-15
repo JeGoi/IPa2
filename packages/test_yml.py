@@ -63,7 +63,7 @@ def test_general_structure_file(out,yml):
 def test_program(out,yml):
     op = 'Program'
     obligations = ['name','exitValue','executablePaths','menu','numImputs']
-    warnings    = ['outputsPath','website','helpSupplementary','publication','desc','webServices','outputFilesFromOutputPath']
+    warnings    = ['outputsPath','website','helpSupplementary','publication','desc','webServices']
 
     for o in obligations:
         if o not in yml[op] or yml[op][o] == "" or yml[op][o] == None:
