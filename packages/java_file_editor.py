@@ -586,7 +586,7 @@ def write_program_overview(out,yml):
               "        layout.setVerticalGroup(\n"+
               "            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)\n"+
               "                .addGroup(layout.createSequentialGroup()\n"+
-              "                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)\n")
+              "                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)\n"+
               "                    .addComponent(close_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)\n"+
               "                    .addComponent(ClusterProgramButton))\n")
     if 'Docker' in yml and yml['Docker'] is not None:
