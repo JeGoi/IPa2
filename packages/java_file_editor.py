@@ -206,7 +206,7 @@ def write_boxes_buttons_values(out,yml):
     write_specific_button(out,"run_jButton","Run",'JButton','Run this box','91','0, 255, 3')
     write_specific_button(out,"how_jButton","?",'JButton','About this box','51','255, 0, 255')
     write_specific_button(out,"close_jButton","Close",'JButton','Close this box','91','0, 0, 255')
-
+    write_specific_button(out,"ClusterProgram_jButton","Cluster Options",'JButton','Get Acccess to cluster','115','0, 0, 255')
     write_box_and_button(out,"name_jLabel","(re)Name",'label','Name Box')
     write_box_and_button(out,"name_jTextField","Name",'txt','Rename the box here')
 
@@ -572,6 +572,9 @@ def write_program_overview(out,yml):
               "            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)\n"+
               "            .addGroup(layout.createSequentialGroup()\n"+
               "                .addComponent(close_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)\n"+
+              "                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)\n"+
+              "                .addGap(18, 18, 18)\n"+
+              "                .addComponent(ClusterProgramButton)\n"+
               "                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)\n")
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("                .addComponent(docker_jButton)\n"+
@@ -584,11 +587,12 @@ def write_program_overview(out,yml):
               "            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)\n"+
               "                .addGroup(layout.createSequentialGroup()\n"+
               "                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)\n")
+              "                    .addComponent(close_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)\n"+
+              "                    .addComponent(ClusterProgramButton))\n")
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("                    .addComponent(docker_jButton)\n")
 
-    out.write("                    .addComponent(close_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)\n"+
-              "                    .addComponent(how_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))\n"+
+    out.write("                    .addComponent(how_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))\n"+
               "                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)\n"+
               "                    .addComponent("+u.get_program_name(yml)+"_tab, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))\n"+
               "        );\n"+
@@ -678,7 +682,14 @@ def write_events_start(out,yml):
                 "        // TODO add your handling code here:\n"+
                 "        properties.put(\"Name\", name_jTextField.getText());\n"+
                 "    }//GEN-LAST:event_name_jTextField_ActionPerformed\n"+
+                "\n"+
+                "    private void ClusterProgram_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClusterProgram_jButton_ActionPerformed\n"+
+                "        // TODO add your handling code here:\n"+
+                "        clusterEditorProgram clus = new clusterEditorProgram(this.frame, false, properties);\n"+
+                "        clus.setVisible(true);\n"+
+                "    }//GEN-LAST:event_ClusterProgram_jButtonActionPerformed\n"+
                 "\n")
+
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("    private void docker_jButton_ActionPerformed(java.awt.event.ActionEvent evt){//GEN-FIRST:event_docker_jButton_ActionPerformed\n"+
                     "        // TODO add your handling code here:\n"+
@@ -1028,6 +1039,11 @@ def write_configuration_object_properties(out,yml):
                 "        // Set the program properties\n"+
                 "        this.setProperties(properties);\n"+
                 "        \n"+
+                "        if (Cluster.isClusterEnable(parent_workflow))\n"+
+                "            ClusterProgram_jButton.setVisible(true);\n"+
+                "        else\n"+
+                "            ClusterProgram_jButton.setVisible(false);\n"+
+                "        \n"+
                 "        this.setAlwaysOnTop(true);\n"+
                 "        this.setVisible(true);\n"+
                 "    }\n"+
@@ -1243,6 +1259,7 @@ def write_bottom_variables_start(out,yml):
               "    private javax.swing.JButton reset_jButton;\n"+
               "    private javax.swing.JButton close_jButton;\n"+
               "    private javax.swing.JButton stop_jButton;\n"+
+              "    private javax.swing.JButton ClusterProgram_jButton;\n"+
               "    private javax.swing.JButton run_jButton;\n"+
               "    private javax.swing.ButtonGroup Menu_Buttons;\n")
 def write_bottom_variables_end(out,yml):
