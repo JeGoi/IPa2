@@ -7,13 +7,13 @@ Program:
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
     menu                : 'NGS: EMBOSS'
     numImputs            : 2
-    outputPath          : ./results/EMBOSS/est2genome/
+    outputsPath          : ./results/EMBOSS/est2genome/
     publication         :
     helpSupplementary   : Align EST sequences to genomic DNA sequence
     desc                :
     website             : http://emboss.sourceforge.net/apps/cvs/emboss/apps/est2genome.html
     webServices         :
-    outputFilesFromOutputPath:
+
 Docker:
     imageName           : jego/emboss
     cmd                 : est2genome --auto

@@ -7,13 +7,13 @@ Program:
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
     menu                : 'NGS: EMBOSS'
     numImputs           : 1
-    outputPath          : ./results/EMBOSS/banana/
+    outputsPath          : ./results/EMBOSS/banana/
     publication         :
     helpSupplementary   : Bending and curvature plot in B-DNA
     desc                :
     website             : http://emboss.sourceforge.net/apps/cvs/emboss/apps/banana.html
     webServices         :
-    outputFilesFromOutputPath:
+
 Docker:
     imageName:      jego/emboss
     cmd:            banana --auto

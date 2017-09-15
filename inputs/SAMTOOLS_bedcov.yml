@@ -7,13 +7,13 @@ Program:
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
     menu                : 'NGS: SAMTOOLS’
     numImputs           : 2
-    outputPath          : ./results/SAMTOOLS/bedcov/
+    outputsPath          : ./results/SAMTOOLS/bedcov/
     publication         :
     helpSupplementary   : Reports the total read base count (i.e. the sum of per base read depths) for each genomic region specified in the supplied BED file. Counts for each alignment file supplied are reported in separate columns. samtools bedcov [options] region.bed in1.sam|in1.bam|in1.cram [...] 
     desc                :
     website             : 
     webServices         :
-    outputFilesFromOutputPath:
+
 Docker:
     imageName           : jego/samtools
     cmd                 : samtools bedcov

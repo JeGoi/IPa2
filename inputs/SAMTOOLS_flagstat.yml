@@ -7,7 +7,7 @@ Program:
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
     menu                : 'NGS: SAMTOOLS’
     numImputs           : 1
-    outputPath          : ./results/SAMTOOLS/flagstat/
+    outputsPath          : ./results/SAMTOOLS/flagstat/
     publication         :
     helpSupplementary   : Index a coordinate-sorted BAM or CRAM file for fast random access. (Note that this does not work with SAM files even if they are bgzip compressed — to index such files, use tabix(1) instead.) samtools flagstat in.sam|in.bam|in.cram
     desc                : |
@@ -32,7 +32,7 @@ Program:
         with mate mapped to a different chr (mapQ>=5)   0x1 bit set and neither 0x4 nor 0x8 bits set and MRNM not equal to RNAME and MAPQ >= 5
     website             : 
     webServices         :
-    outputFilesFromOutputPath:
+
 Docker:
     imageName           : jego/samtools
     cmd                 : samtools flagstat

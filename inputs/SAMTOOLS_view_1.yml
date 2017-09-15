@@ -7,13 +7,13 @@ Program:
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
     menu                : 'NGS: SAMTOOLS'
     numImputs           : 1
-    outputPath          : ./results/SAMTOOLS/view/
+    outputsPath          : ./results/SAMTOOLS/view/
     publication         :
     helpSupplementary   : With no options or regions specified, prints all alignments in the specified input alignment file (in SAM, BAM, or CRAM format) to standard output in SAM format (with no header).
     desc                :
     website             :
     webServices         :
-    outputFilesFromOutputPath:
+
     version             : '1.3.1'
 Docker:
     imageName           : jego/samtools
@@ -49,11 +49,11 @@ Inputs:
 Outputs:
   - type            : SamFile
     connectorText   : Outfile
-    command2Call    : >
+    command2Call    : '>'
     extension       : .sam
   - type            : BamFile
     connectorText   : Outfile
-    command2Call    : >
+    command2Call    : '>'
     extension       : .bam
 Menus:
   - name    : Default Options
@@ -152,4 +152,8 @@ Menus:
 
 AfterProcess:
     - modifications:
-        - Move the reset button, just a little to fix every boxes
+        - Editor:
+            - Move the reset button, just a little to fix every boxes
+        - Program:
+            - add if option b selected them bam output
+        

@@ -7,13 +7,13 @@ Program:
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
     menu                : 'NGS: SAMTOOLS’
     numImputs           : 1
-    outputPath          : ./results/SAMTOOLS/flagstat/
+    outputsPath          : ./results/SAMTOOLS/flagstat/
     publication         :
     helpSupplementary   : samtools stats collects statistics from BAM files and outputs in a text format. The output can be visualized graphically using plot-bamstats. samtools stats [options] in.sam|in.bam|in.cram [region...]
     desc                :
     website             : 
     webServices         :
-    outputFilesFromOutputPath:
+
 Docker:
     imageName           : jego/samtools
     cmd                 : samtools stats

@@ -1,0 +1,46 @@
+Program:
+    name                : samtools faidx
+    exitValue           : 0
+    executablePaths:
+      ExecutableLinux   : /usr/bin/docker
+      ExecutableMacOSX  : docker
+      Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
+    menu                : 'NGS: SAMTOOLS'
+    numImputs           : 2
+    outputsPath          : ./results/SAMTOOLS/faidx/
+    publication         :
+    helpSupplementary   : 
+    desc                :
+    website             : 
+    webServices         :
+
+Docker:
+    imageName           : jego/samtools
+    cmd                 : samtools faidx
+    sharedFolder        : /data
+    dockerName          : 
+    rmks                : 
+    copyDockerFilesDir2SharedFolder:
+Inputs:
+  - type                : FastaFile
+    connector           : 2
+    connectorText       : Fasta
+    OneConnectorOnlyFor : 2
+    SolelyConnectors    : 
+    command2Call        : 
+    extension           : .fasta
+
+Outputs:
+  - type            : FaidxFile
+    connectorText   : Faidx
+    command2Call    :  
+    extension       : .fa.fai
+Menus:
+  - name    : Default Options
+    isMenu  : true
+    isTab   : false
+    help    : Default Options
+
+AfterProcess:
+    - modifications:
+        - None

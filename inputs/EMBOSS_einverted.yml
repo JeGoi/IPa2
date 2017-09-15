@@ -7,13 +7,13 @@ Program:
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
     menu                : 'NGS: EMBOSS'
     numImputs           : 1
-    outputPath          : ./results/EMBOSS/einverted/
+    outputsPath          : ./results/EMBOSS/einverted/
     publication         :
     helpSupplementary   : Finds DNA inverted repeats
     desc                :
     website             : http://emboss.sourceforge.net/apps/cvs/emboss/apps/einverted.html
     webServices         :
-    outputFilesFromOutputPath:
+
 Docker:
     imageName           : jego/emboss
     cmd                 : einverted --auto

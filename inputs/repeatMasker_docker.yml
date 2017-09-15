@@ -7,13 +7,13 @@ Program:
       Executable        : RepeatMasker
     menu                : 'NGS: RepeatMasker'
     numImputs           : 2
-    outputPath          : ./results/RepeatMasker/
+    outputsPath          : ./results/RepeatMasker/
     publication         : 
     helpSupplementary   : 'Mask repetitive DNA SYNOPSIS: RepeatMasker [-options] <seqfiles(s) in fasta format> Default settings are for masking all type of repeats in a primatesequence'
     desc                :
     website             : http://www.repeatmasker.org/faq.html
     webServices         :
-    outputFilesFromOutputPath:
+
 Inputs:
   - type                : FastaFile
     connector           : 2

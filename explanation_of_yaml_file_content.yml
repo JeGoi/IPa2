@@ -14,7 +14,7 @@ Program:  **
     desc                : [string,'']
     website             : [string,'']       (link to application website)
     webServices         : [string,'']       (link to application webservices)
-    #outputFilesFromOutputPath: [string,'']  (NOT USED ANY MORE, we use shared folder between docker container and host)
+    #outputFilesFromoutputsPath: [string,'']  (NOT USED ANY MORE, we use shared folder between docker container and host)
     version             : [string,'']       (link to application version)
 Docker:
     imageName           : [string]                  ** (name of content in docker hub)

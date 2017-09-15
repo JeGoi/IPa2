@@ -1,27 +1,25 @@
 Program:
-    name                : bfctools call
+    name                : bcftools call
     exitValue           : 0
     executablePaths:
       ExecutableLinux   : /usr/bin/docker
       ExecutableMacOSX  : docker
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
-    menu                : 'NGS: BFCTOOLS'
+    menu                : 'NGS: BCFTOOLS'
     numImputs           : 1
-    outputPath          : ./results/BFCTOOLS/call/
+    outputsPath          : ./results/BCFTOOLS/call/
     publication         :
     helpSupplementary   :
     desc                :
     website             :
     webServices         :
-    outputFilesFromOutputPath:
+
     version             : '1.3.1'
 Docker:
-    imageName           : jego/bfctools
-    cmd                 : bfctools call
+    imageName           : jego/samtools
+    cmd                 : bcftools call
     sharedFolder        : /data
-    dockerName          :
     rmks                :
-    copyDockerFilesDir2SharedFolder:
 Inputs:
   - type                : VCFFile
     connector           : 2
@@ -39,17 +37,13 @@ Inputs:
     command2Call        :
     extension           : .bcf
 Outputs:
-  - type            : TextFile
-    connectorText   : Outfile
-    command2Call    :
-    extension       : .txt
   - type            : VCFFile
     connectorText   : VCF
-    command2Call    :
+    command2Call    : --output
     extension       : .vcf
   - type            : BCFFile
     connectorText   : BCF
-    command2Call    :
+    command2Call    : --output
     extension       : .bcf
 Menus:
   - name    : Default Options
@@ -72,6 +66,25 @@ Menus:
                 vMin    :
                 vMax    :
                 vJump   :
+            tooltip     : output variant sites only
+            label       :
+            oppositeTo  :
+            parentOf    :
+            selected    :
+            cHelp       :
+      - tab     : File format options
+        Arguments:
+          - name        : --output-type
+            shortName   : -O
+            cType       : box
+            values:
+                vType   : combo
+                vDefault: u
+                vValues :
+                    #- b
+                    - u
+                    #- z
+                    - v
             tooltip     : output variant sites only
             label       :
             oppositeTo  :

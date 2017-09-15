@@ -7,13 +7,13 @@ Program:
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
     menu                : 'NGS: EMBOSS'
     numImputs           : 1
-    outputPath          : ./results/EMBOSS/sizeseq/
+    outputsPath          : ./results/EMBOSS/sizeseq/
     publication         : 
     helpSupplementary   : sizeseq reads a set of sequences and sorts them by length. By default the sort is in ascending order.
     desc                :         
     website             : http://emboss.sourceforge.net/apps/cvs/emboss/apps/sizeseq.html
     webServices         :  
-    outputFilesFromOutputPath: 
+
 Docker:
     imageName   : jego/emboss
     cmd         : sizeseq --auto

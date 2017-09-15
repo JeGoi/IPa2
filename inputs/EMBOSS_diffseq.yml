@@ -7,13 +7,13 @@ Program:
       Executable        : '"C:\Program Files\Git\bin\bash.exe" --login -i "C:\Program Files\Docker Toolbox\start.sh"'
     menu                : 'NGS: EMBOSS'
     numImputs           : 2
-    outputPath          : ./results/EMBOSS/diffseq/
+    outputsPath          : ./results/EMBOSS/diffseq/
     publication         :
     helpSupplementary   : Find differences between nearly identical sequences
     desc                :
     website             : http://emboss.sourceforge.net/apps/cvs/emboss/apps/diffseq.html
     webServices         :
-    outputFilesFromOutputPath:
+
 Docker:
     imageName       : jego/emboss
     cmd             : diffseq --auto
