@@ -28,15 +28,23 @@ def create_java_editor_form(yml,armaDir):
         "run"   : "jButton"
     }
 
-    write_header_file(out,yml)
+    write_begin(out,yml)
     write_layout(out,yml)
     write_container(out,yml)
     write_close_form(out,yml)
 
 # ===============================================
-# Header File
+#  SUB FUNCTIONS TO CREATE Java File Editor
 # ===============================================
-def write_header_file(out,yml):
+#
+# Header and variables
+#
+def write_begin(out,yml):
+    write_begin_file(out,yml)
+#
+# Header and variables
+#
+def write_begin_file(out,yml):
     out.write(  "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"+
                 "\n"+
                 "<Form version=\"1.5\" maxVersion=\"1.9\" type=\"org.netbeans.modules.form.forminfo.JDialogFormInfo\">\n")
@@ -67,11 +75,21 @@ def write_header_file(out,yml):
                 "\n")
 
 def write_layout(out,yml):
+    write_layout_start(out,yml)
+    write_command_component(out,8,"close_jButton","Close","jButton",91,[0,0,"ff"],"Close this box",None,False)
+    write_command_component(out,8,"ClusterProgram_jButton","Cluster Options","jButton",91,[0,0,"ff"],"Access to cluster properties",None,False)
+    write_command_component(out,8,"how_jButton","?","jButton",51,["ff",0,"ff"],"About this box",None,False)
+    if 'Docker' in yml and yml['Docker'] is not None:
+        write_command_component(out,8,"docker_jButton","Docker Editor",'JButton',91,None,'Access to the docker editor',None,False)
+
+def write_layout_start(out,yml):
     out.write(  "    <Layout>\n"+
                 "        <DimensionLayout dim=\"0\">\n"+
                 "            <Group type=\"103\" groupAlignment=\"0\" attributes=\"0\">\n"+
                 "                <Group type=\"102\" attributes=\"0\">\n"+
                 "                    <Component id=\"close_jButton\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n"+
+                "                    <EmptySpace type=\"separate\" max=\"-2\" attributes=\"0\"/>\n"+
+                "                    <Component id=\"ClusterProgram_jButton\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n"+
                 "                    <EmptySpace max=\"32767\" attributes=\"0\"/>\n")
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write(  "                    <Component id=\"docker_jButton\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n"+
@@ -87,6 +105,7 @@ def write_layout(out,yml):
                 "                <Group type=\"102\" attributes=\"0\">\n"+
                 "                    <Group type=\"103\" groupAlignment=\"3\" attributes=\"0\">\n"+
                 "                        <Component id=\"close_jButton\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n"+
+                "                        <Component id=\"ClusterProgram_jButton\" alignment=\"3\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n"+
                 "                        <Component id=\"how_jButton\" min=\"-2\" max=\"-2\" attributes=\"0\"/>\n")
 
     if 'Docker' in yml and yml['Docker'] is not None:
@@ -101,10 +120,6 @@ def write_layout(out,yml):
                 "    </Layout>\n"+
                 "\n"+
                 "    <SubComponents>\n")
-    write_command_component(out,8,"close_jButton","Close","jButton",91,[0,0,"ff"],"Close this box",None,False)
-    write_command_component(out,8,"how_jButton","?","jButton",51,["ff",0,"ff"],"About this box",None,False)
-    if 'Docker' in yml and yml['Docker'] is not None:
-        write_command_component(out,8,"docker_jButton","Docker Editor",'JButton',91,None,'Access to the docker editor',None,False)
 
 def write_container(out,yml):
     out.write(  "    <Container class=\"javax.swing.JTabbedPane\" name=\""+u.get_program_name(yml)+"_tab\">\n"+
