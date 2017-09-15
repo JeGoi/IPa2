@@ -28,25 +28,42 @@ def create_java_editor_file(yml,armaDir):
         "run"   : "jButton"
     }
 
-    write_header_file(out,yml)
+    write_begin(out,yml)
     write_setDefaultCloseOperation(out,yml)
     write_events(out,yml)
     write_functions(out,yml)
     write_bottom_variables(out,yml)
+    write_end(out,yml)
 
 
 # ===============================================
-# Header File
+#  SUB FUNCTIONS TO CREATE Java File Editor
 # ===============================================
-def write_header_file(out,yml):
+#
+# Header and variables
+#
+def write_begin(out,yml):
+    write_begin_start(out,yml)
+    write_import_class(out,yml)
+    write_author_date(out,yml)
+    write_variables(out,yml)
+    write_header_variables(out,yml)
+    write_java_variables(out,yml,"header")
+#
+# Header and variables
+#
+    
+def write_begin_start(out,yml):
     out.write("/**\n"+
                 "* To change this license header, choose License Headers in Project Properties.\n"+
                 "* To change this template file, choose Tools | Templates\n"+
                 "* and open the template in the editor.\n"+
                 "*/\n"+
                 "package editors;\n"+
-                "\n"+
-                "import configuration.Config;\n"+
+                "\n")
+
+def write_import_class(out,yml):
+    out.write("import configuration.Config;\n"+
                 "import configuration.Util;\n"+
                 "import editor.EditorInterface;\n"+
                 "import java.awt.Dimension;\n"+
@@ -69,14 +86,17 @@ def write_header_file(out,yml):
                 "import workflows.armadillo_workflow;\n"+
                 "import workflows.workflow_properties;\n"+
                 "import workflows.workflow_properties_dictionnary;\n"+
-                "\n"+
-                "/**\n"+
+                "\n")
+                
+def write_author_date(out,yml):
+    out.write("/**\n"+
                 " *\n"+
                 " * @author : "+yml['author']+"\n"+
                 " * @Date   : "+yml['date']+"\n"+
                 " */\n"+
-                "\n"+
-                "public class "+u.get_program_name(yml)+"Editors extends javax.swing.JDialog implements EditorInterface {\n"+
+                "\n")
+def write_variables(out,yml):
+    out.write("public class "+u.get_program_name(yml)+"Editors extends javax.swing.JDialog implements EditorInterface {\n"+
                 "\n"+
                 "    /**\n"+
                 "     * Creates new form "+u.get_program_name(yml)+"Editors\n"+
@@ -121,7 +141,6 @@ def write_header_file(out,yml):
     out.write("    }\n"+
               "    \n"+
               "\n")
-    write_header_variables(out,yml)
 
 def write_header_variables(out,yml):
     out.write("\n"+
@@ -148,8 +167,11 @@ def write_header_variables(out,yml):
               "        close_jButton    = new javax.swing.JButton();\n"+
               "        stop_jButton     = new javax.swing.JButton();\n"+
               "        run_jButton      = new javax.swing.JButton();\n")
-    write_java_variables(out,yml,"header")
 
+
+#
+# Default Close Operation
+#
 def write_setDefaultCloseOperation(out,yml):
     out.write("\n        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);\n\n")
     write_boxes_buttons_values(out,yml)
@@ -160,6 +182,9 @@ def write_setDefaultCloseOperation(out,yml):
     out.write("\n"+
               "        pack();\n"
               "    }\n")
+#
+# Default Close Operation
+#
 
 def write_boxes_buttons_values(out,yml):
 
@@ -592,12 +617,18 @@ def write_nested_tabs(out,yml):
                         tName  = pNameI+"_"+u.create_initials(Tab['tab'])
                         out.write("        "+tmName+"_JTabbedPane.addTab(\""+Tab['tab']+"\","+tName+"_JPanel);\n")
 
-# ===============================================
-#     def FUNCTION OF createJavaEditorFile
-# in  : get spinner or text informations from csv file
-# out : print infos of panel creation in java file
-# ===============================================
+#
+# Events part
+#
 def write_events(out,yml):
+    write_events_start(out,yml)
+    write_event_menu(out,yml)
+    write_event_commands(out,yml)
+#
+# Events part
+#
+
+def write_events_start(out,yml):
     out.write(  "    // </editor-fold>//GEN-END:initComponents\n"+
                 "\n"+
                 "    private void "+u.get_program_name(yml)+"_tab_ComponentShown(java.awt.event.ComponentEvent evt){//GEN-FIRST:event_"+u.get_program_name(yml)+"_tab_ComponentShown\n"+
@@ -656,8 +687,6 @@ def write_events(out,yml):
                     "    }//GEN-LAST:event_docker_jButton_ActionPerformed\n"+
                     "    \n")
 
-    write_event_menu(out,yml)
-    write_event_commands(out,yml)
 
 def write_event_menu(out,yml):
     allMenu = []
@@ -875,9 +904,9 @@ def write_event_command_dir_value(out,c,cType,v,vType):
                 "        }\n")
 
 
-# ===============================================
-# write_functions
-# ===============================================
+#
+# Functions
+#
 def write_functions(out,yml):
     write_objects_list_dictionaries(out,yml)
     write_objects_dictionaries(out,yml)
@@ -887,6 +916,9 @@ def write_functions(out,yml):
     write_menu_fields(out,yml)
     write_usp_parent_children(out,yml)
     write_save_image(out,yml)
+#
+# Functions
+#
 
 def write_objects_list_dictionaries(out,yml):
     out.write(  "    /*******************************************************************\n"+
@@ -1187,10 +1219,20 @@ def write_save_image(out,yml):
                 "    }\n"+
                 "\n")
 
-# ===============================================
-# write_bottom_variables
-# ===============================================
+
+#
+# Bottom variables
+#
 def write_bottom_variables(out,yml):
+    write_bottom_variables_start(out,yml)
+    if 'Docker' in yml and yml['Docker'] is not None:
+        out.write("    private javax.swing.JButton docker_jButton;\n")
+    write_java_variables(out,yml,"bottom")
+    write_bottom_variables_end(out,yml)
+#
+# Bottom variables
+#
+def write_bottom_variables_start(out,yml):
     out.write("    // Variables declaration - do not modify//GEN-BEGIN:variables\n"+
               "    private javax.swing.JButton how_jButton;\n"
               "    private javax.swing.JTabbedPane "+u.get_program_name(yml)+"_tab;\n"+
@@ -1203,13 +1245,10 @@ def write_bottom_variables(out,yml):
               "    private javax.swing.JButton stop_jButton;\n"+
               "    private javax.swing.JButton run_jButton;\n"+
               "    private javax.swing.ButtonGroup Menu_Buttons;\n")
-    if 'Docker' in yml and yml['Docker'] is not None:
-        out.write("    private javax.swing.JButton docker_jButton;\n")
-    write_java_variables(out,yml,"bottom")
+def write_bottom_variables_end(out,yml):
     out.write("    // End of variables declaration//GEN-END:variables\n"+
-                "    }\n"+
-                "\n")
-
+                "    \n")
+    
 # ===============================================
 # write_java_variables (header and bottom)
 # ===============================================
@@ -1288,3 +1327,13 @@ def write_java_variables(out,yml,where):
                                 out.write("        "+v+" = new javax.swing."+u.get_value_java_type(vType)+"();\n")
                             if (where == "bottom"):
                                 out.write("    private javax.swing."+u.get_value_java_type(vType)+" "+v+";\n")
+
+#
+# End of file
+#
+def write_end(out,yml):
+    out.write("    }\n"+
+                "\n")
+#
+# End of file
+#
