@@ -77,7 +77,7 @@ def get_armadillo_biologic_files_name():
     return s;
 
 def cleanOutuptPath(yml):
-    s = yml['Program']['outputPath']
+    s = yml['Program']['outputsPath']
     s = s.replace(os.path.sep,"\"+File.separator+\"")
     s = '"'+s+'"'
     return s
