@@ -30,9 +30,6 @@ def create_properties_file(yml,armaDir):
                 "\nEditorClassName= editors."+u.get_program_name(yml)+"Editors"+
                 "\ndebug= false"+
                 "\nfilename= C\:\\armadillo2\\data\\properties\\"+u.get_program_name(yml)+".properties")
-    if 'version' in yml['Program']:
-        out.write("\nVersion= "+u.get_program_version(yml)+"")
-
     for paths in yml['Program']['executablePaths']:
         out.write("\n"+paths+"="+yml['Program']['executablePaths'][paths])
 
@@ -168,3 +165,23 @@ def create_properties_file(yml,armaDir):
                             v       = u.create_value_name(pNameS,tName,cName,vType)
                             vDef    = str(Arguments['values']['vDefault'])
                             out.write(v+"<>"+vDef+"<>")
+
+    out.write("\n#Cluster")
+    if 'Cluster' in yml and yml['Cluster'] is not None:
+        if 'ClusterProgramName' in yml['Cluster']:
+            out.write("\nClusterProgramName="+yml['Cluster']['ClusterProgramName'])
+        if 'ExecutableCluster' in yml['Cluster']:
+            out.write("\nExecutableCluster="+yml['Cluster']['ExecutableCluster'])
+    if 'version' in yml['Program']:
+        out.write("\nVersion= "+u.get_program_version(yml)+"")
+
+    out.write("\n#Docker")
+    if 'Docker' in yml and yml['Docker'] is not None:
+        if 'DockerImage' in yml['Docker']:
+            out.write("\nDockerImage="+yml['Docker']['DockerImage'])
+        if 'ExecutableDocker' in yml['Docker']:
+            out.write("\nExecutableDocker="+yml['Docker']['ExecutableDocker'])
+        if 'DockerInputs' in yml['Docker']:
+            out.write("\nDockerInputs="+yml['Docker']['DockerInputs'])
+        if 'DockerOutputs' in yml['Docker']:
+            out.write("\nDockerOutputs="+yml['Docker']['DockerOutputs'])

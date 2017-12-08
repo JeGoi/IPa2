@@ -58,9 +58,9 @@ import packages.java_file_editor as fileEdit
 import packages.java_form_editor as formEdit
 import os.path
 
-author  = "J-G"
+author  = "IPA2"
 date    = (time.strftime("%d-%m-%Y"))
-kword   = "armadilloWF"
+kword   = "armadillo_WF_"
 
 def main(argv):
     armaDir     = ''

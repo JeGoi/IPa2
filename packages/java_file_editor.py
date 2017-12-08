@@ -63,9 +63,12 @@ def write_begin_start(out,yml):
                 "\n")
 
 def write_import_class(out,yml):
-    out.write("import configuration.Config;\n"+
+    out.write("import configuration.Cluster;\n"+
+                "import configuration.Config;\n"+
                 "import configuration.Util;\n"+
                 "import editor.EditorInterface;\n"+
+                "import editor.clusterEditorProgram;\n"+
+                "import editor.dockerEditorProgram;\n"+
                 "import java.awt.Dimension;\n"+
                 "import java.awt.Frame;\n"+
                 "import java.awt.Robot;\n"+
@@ -157,6 +160,9 @@ def write_header_variables(out,yml):
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("        docker_jButton = new javax.swing.JButton();\n")
 
+    if 'Cluster' in yml and yml['Cluster'] is not None:
+        out.write("        cluster_jButton = new javax.swing.JButton();\n")
+
     out.write("        how_jButton      = new javax.swing.JButton();\n"+
               "        "+u.get_program_name(yml)+"_tab = new javax.swing.JTabbedPane();\n"+
               "        general_jPanel1  = new javax.swing.JPanel();\n"+
@@ -189,7 +195,10 @@ def write_setDefaultCloseOperation(out,yml):
 def write_boxes_buttons_values(out,yml):
 
     if 'Docker' in yml and yml['Docker'] is not None:
-        write_box_and_button(out,"docker_jButton","Docker Editor",'JButton','Access to the docker editor')
+        write_box_and_button(out,"docker_jButton","Docker",'JButton','Access to the docker program editor')
+
+    if 'Cluster' in yml and yml['Cluster'] is not None:
+        write_box_and_button(out,"cluster_jButton","Cluster",'JButton','Access to the cluster program editor')
 
     out.write("        "+u.get_program_name(yml)+"_tab.addComponentListener(new java.awt.event.ComponentAdapter() {\n"+
                 "            public void componentShown(java.awt.event.ComponentEvent evt) {\n"+
@@ -579,6 +588,9 @@ def write_program_overview(out,yml):
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("                .addComponent(docker_jButton)\n"+
                   "                .addGap(18, 18, 18)\n")
+    if 'Cluster' in yml and yml['Cluster'] is not None:
+        out.write("                .addComponent(cluster_jButton)\n"+
+                  "                .addGap(18, 18, 18)\n")
 
     out.write("                .addComponent(how_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))\n"+
               "                .addComponent("+u.get_program_name(yml)+"_tab, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)\n"+
@@ -591,7 +603,10 @@ def write_program_overview(out,yml):
               "                    .addComponent(ClusterProgramButton))\n")
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("                    .addComponent(docker_jButton)\n")
-
+        
+    if 'Cluster' in yml and yml['Cluster'] is not None:
+        out.write("                    .addComponent(cluster_jButton)\n")
+        
     out.write("                    .addComponent(how_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))\n"+
               "                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)\n"+
               "                    .addComponent("+u.get_program_name(yml)+"_tab, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))\n"+
@@ -693,9 +708,16 @@ def write_events_start(out,yml):
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("    private void docker_jButton_ActionPerformed(java.awt.event.ActionEvent evt){//GEN-FIRST:event_docker_jButton_ActionPerformed\n"+
                     "        // TODO add your handling code here:\n"+
-                    "        dockerEditor dock = new dockerEditor(this.frame, false, properties);\n"+
+                    "        dockerEditorProgram dock = new dockerEditorProgram(this.frame, false, properties);\n"+
                     "        dock.setVisible(true);\n"+
                     "    }//GEN-LAST:event_docker_jButton_ActionPerformed\n"+
+                    "    \n")
+    if 'Cluster' in yml and yml['Cluster'] is not None:
+        out.write("    private void cluster_jButton_ActionPerformed(java.awt.event.ActionEvent evt){//GEN-FIRST:event_cluster_jButton_ActionPerformed\n"+
+                    "        // TODO add your handling code here:\n"+
+                    "        clusterEditorProgram clus = new clusterEditorProgram(this.frame, false, properties);\n"+
+                    "        clus.setVisible(true);\n"+
+                    "    }//GEN-LAST:event_cluster_jButton_ActionPerformed\n"+
                     "    \n")
 
 
@@ -1243,6 +1265,8 @@ def write_bottom_variables(out,yml):
     write_bottom_variables_start(out,yml)
     if 'Docker' in yml and yml['Docker'] is not None:
         out.write("    private javax.swing.JButton docker_jButton;\n")
+    if 'Cluster' in yml and yml['Cluster'] is not None:
+        out.write("    private javax.swing.JButton cluster_jButton;\n")
     write_java_variables(out,yml,"bottom")
     write_bottom_variables_end(out,yml)
 #
